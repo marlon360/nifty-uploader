@@ -22,5 +22,9 @@
   "bugs": {
     "url": "https://github.com/marlon360/nifty-uploader/issues"
   },
-  "homepage": "https://github.com/marlon360/nifty-uploader#readme"
+  "homepage": "https://github.com/marlon360/nifty-uploader#readme",
+  "devDependencies": {
+    "tslint": "^5.11.0",
+    "typescript": "^3.2.2"
+  }
 }
