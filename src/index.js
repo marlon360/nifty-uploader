@@ -1,1 +1,2 @@
-module.exports = require('./NiftyUploader').default;
+
+window["NiftyUploader"] = require("./NiftyUploader");

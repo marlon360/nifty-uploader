@@ -4,12 +4,14 @@
     "module": "es2015", 
     "lib": ["es5", "dom"],
     "outDir": "./lib/esm/",
+    "declaration": true,
+    "declarationDir": "./lib/types",
     "noImplicitAny": true,
     "strictNullChecks": true,
     "moduleResolution": "node",
     "sourceMap": true,
     "baseUrl": "./",
-    "allowJs": true,
+    //"allowJs": true,
     "paths": {
       "*": [
         "node_modules/*"

@@ -2,10 +2,12 @@
   "name": "nifty-uploader",
   "version": "0.0.1",
   "description": "An easy file uploader for the browser written in Javascript",
-  "main": "index.js",
+  "main": "lib/esm/NiftyUploader.js",
+  "types": "lib/types/NiftyUploader.d.ts",
   "scripts": {
-    "prebuild": "tsc",
-    "build": "webpack",
+    "build-esm": "tsc",
+    "build-umd": "parcel build src/index.js --out-dir lib/umd --out-file nifty-uploader.js --experimental-scope-hoisting",
+    "build": "npm run build-esm && npm run build-umd",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,11 +28,8 @@
   },
   "homepage": "https://github.com/marlon360/nifty-uploader#readme",
   "devDependencies": {
-    "@babel/core": "^7.2.0",
-    "babel-loader": "^8.0.4",
+    "parcel-bundler": "^1.10.3",
     "tslint": "^5.11.0",
-    "typescript": "^3.2.2",
-    "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2"
+    "typescript": "^3.2.2"
   }
 }

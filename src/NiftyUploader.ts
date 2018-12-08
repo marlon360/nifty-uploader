@@ -1,6 +1,6 @@
 import { NiftyFile } from "./NiftyFile";
 
-export default class NiftyUploader {
+export class NiftyUploader {
 
     public files: Array<NiftyFile> = new Array<NiftyFile>();
 
