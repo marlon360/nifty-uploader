@@ -1,2 +1,1 @@
-
-window["NiftyUploader"] = require("./NiftyUploader");
+window["NiftyUploader"] = require("./NiftyUploader").NiftyUploader;
