@@ -1,27 +1,22 @@
 import { NiftyFile } from "./NiftyFile";
-import { NiftyOptions, NiftyDefaultOptions } from "./NiftyOptions";
+import { NiftyOptions, NiftyDefaultOptions, NiftyOptionsParameter } from "./NiftyOptions";
 
 export class NiftyUploader {
 
+    // files in uploader
     public files: Array<NiftyFile> = new Array<NiftyFile>();
-    private options: NiftyOptions;
+    // initilize options with default options
+    public options: NiftyOptions = new NiftyDefaultOptions();
 
-    constructor(options?: NiftyOptions) {
-        // create default options
-        const defaultOptions = new NiftyDefaultOptions;
-        if(options == undefined) {
-            // set deafult options as options if no options provided
-            this.options = defaultOptions;
-        } else {
-            // merge provided options with default options
-            this.options = {...defaultOptions, ...options};
-        }
+    constructor(options?: NiftyOptionsParameter) {
+        // merge provided options with current options
+        this.options = {...this.options, ...options};
     }
 
     public addFiles(files: File[]): void {
         files.forEach((file: File) => {
-            this.files.push(new NiftyFile(file));
-        })
+            this.files.push(new NiftyFile({uploader: this, file: file}));
+        });
     }
 
 }
