@@ -19,6 +19,8 @@ export class NiftyFile {
         this.name = param.file.name;
         this.size = param.file.size;
         this.content = param.file;
+
+        this.createChunks();
     }
 
     private createChunks() {
