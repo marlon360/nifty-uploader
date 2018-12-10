@@ -28,9 +28,16 @@ export class NiftyFile {
         const chunkCount = Math.ceil(this.size / this.uploader.options.chunkSize);
         // create chunks
         for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
+            // calculate start byte of chunk
+            const startByte = chunkIndex * this.uploader.options.chunkSize;
+            // calculate end byte of chunk
+            const endByte = Math.min(this.size, (chunkIndex + 1) * this.uploader.options.chunkSize);
+            // create chunk object and add to array
             this.chunks.push(new NiftyChunk({
                 file: this,
-                chunkIndex: chunkIndex
+                chunkIndex,
+                startByte,
+                endByte
             }));
         }
     }
