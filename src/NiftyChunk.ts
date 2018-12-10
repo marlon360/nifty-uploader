@@ -24,4 +24,23 @@ export class NiftyChunk {
         this.endByte = param.endByte;
     }
 
+    public upload() {
+        // create request
+        const connection = new XMLHttpRequest();
+        // slice file
+        const chunkData: Blob = this.sliceFile();
+        // create form data to send
+        const formData = new FormData();
+        // add chunk to from data
+        formData.append('chunk', chunkData, this.file.name);
+        // set request method an url
+        connection.open('POST', '/endpoint');
+        // initilize request
+        connection.send(formData);
+    }
+
+    private sliceFile(): Blob {
+        return this.file.content.slice(this.startByte, this.endByte, 'application/octet-stream');
+    }
+
 }
