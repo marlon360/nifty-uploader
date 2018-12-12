@@ -1,5 +1,7 @@
 import { NiftyFile } from "./NiftyFile";
 import { NiftyUploader } from "./NiftyUploader";
+import { NiftyEvent } from "./NiftyEvent";
+import { ChunkStatus } from "./NiftyStatus";
 
 export class NiftyChunk {
 
@@ -7,6 +9,8 @@ export class NiftyChunk {
     public file: NiftyFile;
 
     public chunkIndex: number;
+
+    public status: ChunkStatus;
 
     private startByte: number;
     private endByte: number;
@@ -22,11 +26,35 @@ export class NiftyChunk {
         this.chunkIndex = param.chunkIndex;
         this.startByte = param.startByte;
         this.endByte = param.endByte;
+        // set initial status to queued
+        this.status = ChunkStatus.QUEUED;
     }
 
     public upload() {
+        // set status to uploading
+        this.status = ChunkStatus.UPLOADING;
+
         // create request
         const connection = new XMLHttpRequest();
+
+        // request event handler
+        const onRequestComplete = () => {
+            if (connection.status == 200 || connection.status == 201) {
+                this.status = ChunkStatus.SUCCESSFUL;
+                this.uploader.chunkSucsessEvent.trigger({chunk: this});
+            } else {
+                this.status = ChunkStatus.FAILED;
+                this.uploader.chunkFailEvent.trigger({chunk: this});
+            }
+        }
+        const onRequestError = () => {
+            this.status = ChunkStatus.FAILED;
+            this.uploader.chunkFailEvent.trigger({chunk: this});
+        }
+        connection.addEventListener('load', onRequestComplete, false);
+        connection.addEventListener('error', onRequestError, false);
+        connection.addEventListener('timeout', onRequestError, false);
+
         // slice file
         const chunkData: Blob = this.sliceFile();
         // create form data to send

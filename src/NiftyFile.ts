@@ -1,5 +1,6 @@
 import { NiftyChunk } from "./NiftyChunk";
 import { NiftyUploader } from "./NiftyUploader";
+import { ChunkStatus } from "./NiftyStatus";
 
 export class NiftyFile {
 
@@ -21,6 +22,18 @@ export class NiftyFile {
         this.content = param.file;
 
         this.createChunks();
+    }
+
+    public upload(): boolean {
+        const chunkCount = this.chunks.length;
+        for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
+            const chunk = this.chunks[chunkIndex];
+            if(chunk.status == ChunkStatus.QUEUED) {
+                chunk.upload();
+                return true;
+            }
+        }
+        return false;
     }
 
     private createChunks() {
