@@ -41,10 +41,10 @@ export class NiftyChunk {
         const onRequestComplete = () => {
             if (connection.status == 200 || connection.status == 201) {
                 this.status = ChunkStatus.SUCCESSFUL;
-                this.uploader.chunkSucsessEvent.trigger({chunk: this});
+                this.file.chunkSucsessEvent.trigger({chunk: this});
             } else {
                 this.status = ChunkStatus.FAILED;
-                this.uploader.chunkFailEvent.trigger({chunk: this});
+                this.file.chunkFailEvent.trigger({chunk: this});
             }
         }
         const onRequestError = () => {

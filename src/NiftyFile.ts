@@ -1,6 +1,7 @@
 import { NiftyChunk } from "./NiftyChunk";
 import { NiftyUploader } from "./NiftyUploader";
-import { ChunkStatus } from "./NiftyStatus";
+import { ChunkStatus, FileStatus } from "./NiftyStatus";
+import { NiftyEvent } from "./NiftyEvent";
 
 export class NiftyFile {
 
@@ -10,7 +11,13 @@ export class NiftyFile {
     public size: number;
     public content: Blob;
 
+    public status: FileStatus;
+
     public chunks: NiftyChunk[] = new Array<NiftyChunk>();
+
+    //Events
+    public chunkSucsessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
+    public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
 
     constructor(param: {
         uploader: NiftyUploader,
@@ -22,18 +29,45 @@ export class NiftyFile {
         this.content = param.file;
 
         this.createChunks();
+        this.status = FileStatus.QUEUED;
+        this.setupEventHandler();
     }
 
     public upload(): boolean {
         const chunkCount = this.chunks.length;
         for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
             const chunk = this.chunks[chunkIndex];
-            if(chunk.status == ChunkStatus.QUEUED) {
+            if (chunk.status == ChunkStatus.QUEUED) {
                 chunk.upload();
+                this.status = FileStatus.UPLOADING;
                 return true;
             }
         }
         return false;
+    }
+
+    private setupEventHandler() {
+        this.chunkSucsessEvent.on((data: { chunk: NiftyChunk }) => {
+            if (this.areAllChunksUploaded()) {
+                this.status == FileStatus.SUCCESSFUL;
+            }
+            this.uploader.chunkSucsessEvent.trigger({ chunk: data.chunk });
+        })
+        this.chunkFailEvent.on((data: { chunk: NiftyChunk }) => {
+            this.status = FileStatus.FAILED;
+            this.uploader.chunkFailEvent.trigger({ chunk: data.chunk });
+        })
+    }
+
+    private areAllChunksUploaded(): boolean {
+        const chunkCount = this.chunks.length;
+        for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
+            const chunk = this.chunks[chunkIndex];
+            if (chunk.status != ChunkStatus.SUCCESSFUL) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private createChunks() {

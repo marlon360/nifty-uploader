@@ -2,6 +2,7 @@ import { NiftyFile } from "./NiftyFile";
 import { NiftyOptions, NiftyDefaultOptions, NiftyOptionsParameter } from "./NiftyOptions";
 import { NiftyEvent } from "./NiftyEvent";
 import { NiftyChunk } from "./NiftyChunk";
+import { FileStatus } from "./NiftyStatus";
 
 export class NiftyUploader {
 
@@ -34,14 +35,15 @@ export class NiftyUploader {
         const filesCount = this.files.length;
         for (let fileIndex = 0; fileIndex < filesCount; fileIndex++) {
             const file = this.files[fileIndex];
-            if (file.upload()) {
-                return
+            if (file.status == FileStatus.QUEUED || file.status == FileStatus.UPLOADING) {
+                file.upload();
+                return;
             }
         }
     }
 
     private setupEventHandler() {
-        this.chunkSucsessEvent.on(({chunk: NiftyChunk}) => {
+        this.chunkSucsessEvent.on((data: { chunk: NiftyChunk }) => {
             this.uploadNextChunk();
         })
     }
