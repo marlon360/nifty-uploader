@@ -30,41 +30,44 @@ export class NiftyChunk {
         this.status = ChunkStatus.QUEUED;
     }
 
-    public upload() {
-        // set status to uploading
-        this.status = ChunkStatus.UPLOADING;
+    public upload(): Promise<string | Error> {
 
-        // create request
-        const connection = new XMLHttpRequest();
+        return new Promise<string | Error>((resolve, reject) => {
+            // set status to uploading
+            this.status = ChunkStatus.UPLOADING;
 
-        // request event handler
-        const onRequestComplete = () => {
-            if (connection.status == 200 || connection.status == 201) {
-                this.status = ChunkStatus.SUCCESSFUL;
-                this.file.chunkSucsessEvent.trigger({chunk: this});
-            } else {
-                this.status = ChunkStatus.FAILED;
-                this.file.chunkFailEvent.trigger({chunk: this});
+            // create request
+            const connection = new XMLHttpRequest();
+
+            // request event handler
+            const onRequestComplete = () => {
+                if (connection.status == 200 || connection.status == 201) {
+                    this.status = ChunkStatus.SUCCESSFUL;
+                    resolve();
+                } else {
+                    this.status = ChunkStatus.FAILED;
+                    resolve();
+                }
             }
-        }
-        const onRequestError = () => {
-            this.status = ChunkStatus.FAILED;
-            this.uploader.chunkFailEvent.trigger({chunk: this});
-        }
-        connection.addEventListener('load', onRequestComplete, false);
-        connection.addEventListener('error', onRequestError, false);
-        connection.addEventListener('timeout', onRequestError, false);
+            const onRequestError = () => {
+                this.status = ChunkStatus.FAILED;
+                reject();
+            }
+            connection.addEventListener('load', onRequestComplete, false);
+            connection.addEventListener('error', onRequestError, false);
+            connection.addEventListener('timeout', onRequestError, false);
 
-        // slice file
-        const chunkData: Blob = this.sliceFile();
-        // create form data to send
-        const formData = new FormData();
-        // add chunk to from data
-        formData.append('chunk', chunkData, this.file.name);
-        // set request method an url
-        connection.open('POST', this.uploader.options.endpoint);
-        // initilize request
-        connection.send(formData);
+            // slice file
+            const chunkData: Blob = this.sliceFile();
+            // create form data to send
+            const formData = new FormData();
+            // add chunk to from data
+            formData.append('chunk', chunkData, this.file.name);
+            // set request method an url
+            connection.open('POST', this.uploader.options.endpoint);
+            // initilize request
+            connection.send(formData);
+        })
     }
 
     private sliceFile(): Blob {

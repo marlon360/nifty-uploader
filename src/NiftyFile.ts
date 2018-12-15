@@ -1,7 +1,6 @@
 import { NiftyChunk } from "./NiftyChunk";
 import { NiftyUploader } from "./NiftyUploader";
 import { ChunkStatus, FileStatus } from "./NiftyStatus";
-import { NiftyEvent } from "./NiftyEvent";
 
 export class NiftyFile {
 
@@ -15,9 +14,6 @@ export class NiftyFile {
 
     public chunks: NiftyChunk[] = new Array<NiftyChunk>();
 
-    //Events
-    public chunkSucsessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
-    public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
 
     constructor(param: {
         uploader: NiftyUploader,
@@ -30,7 +26,6 @@ export class NiftyFile {
 
         this.createChunks();
         this.status = FileStatus.QUEUED;
-        this.setupEventHandler();
     }
 
     public upload(): boolean {
@@ -38,7 +33,11 @@ export class NiftyFile {
         for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
             const chunk = this.chunks[chunkIndex];
             if (chunk.status == ChunkStatus.QUEUED) {
-                chunk.upload();
+                chunk.upload().then(() => {
+                    this.chunkUploadSucessfull(chunk);
+                }).catch((error) => {
+                    this.chunkUploadFailed(chunk, error);
+                })
                 this.status = FileStatus.UPLOADING;
                 return true;
             }
@@ -46,18 +45,18 @@ export class NiftyFile {
         return false;
     }
 
-    private setupEventHandler() {
-        this.chunkSucsessEvent.on((data: { chunk: NiftyChunk }) => {
-            if (this.areAllChunksUploaded()) {
-                this.status == FileStatus.SUCCESSFUL;
-            }
-            this.uploader.chunkSucsessEvent.trigger({ chunk: data.chunk });
-        })
-        this.chunkFailEvent.on((data: { chunk: NiftyChunk }) => {
-            this.status = FileStatus.FAILED;
-            this.uploader.chunkFailEvent.trigger({ chunk: data.chunk });
-        })
+
+    private chunkUploadSucessfull(chunk: NiftyChunk) {
+        if (this.areAllChunksUploaded()) {
+            this.status == FileStatus.SUCCESSFUL;
+        }
+        this.uploader.chunkSucsessEvent.trigger({ chunk: chunk });
     }
+    private chunkUploadFailed(chunk: NiftyChunk, error: string | Error) {
+        this.status = FileStatus.FAILED;
+        this.uploader.chunkFailEvent.trigger({ chunk: chunk });
+    }
+
 
     private areAllChunksUploaded(): boolean {
         const chunkCount = this.chunks.length;
