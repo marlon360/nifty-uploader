@@ -23,12 +23,18 @@ export class NiftyUploader {
 
     public addFiles(files: File[], options?: NiftyOptionsParameter): void {
         files.forEach((file: File) => {
-            this.files.push(new NiftyFile({ uploader: this, file: file, options: options }));
+            const addedFile = new NiftyFile({ uploader: this, file: file, options: options });
+            this.files.push(addedFile);
+            this.processFile(addedFile);
         });
     }
-    
+
     public addFile(file: File, options?: NiftyOptionsParameter): void {
         this.addFiles([file], options);
+    }
+
+    public processFile(file: NiftyFile) {
+        file.processFile();
     }
 
     public upload() {

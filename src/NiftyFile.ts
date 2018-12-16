@@ -26,8 +26,7 @@ export class NiftyFile {
         this.name = param.file.name;
         this.size = param.file.size;
         this.content = param.file;
-
-        this.createChunks();
+        
         this.status = FileStatus.QUEUED;
 
         // set options to uploader options
@@ -37,6 +36,15 @@ export class NiftyFile {
             this.options = { ...this.options, ...param.options };
         }
 
+    }
+
+    public processFile(): Promise<string> {
+        return new Promise((resolve, reject) => {
+            if (this.options.chunking) {
+                this.createChunks();
+            }
+            resolve();
+        });
     }
 
     public upload(): boolean {
