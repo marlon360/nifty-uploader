@@ -59,11 +59,24 @@ export class NiftyChunk {
 
             // slice file
             const chunkData: Blob = this.sliceFile();
+
+            // parameter
+            const params: { [key: string]: string | number } = {
+                'chunkIndex': this.chunkIndex,
+                'totalSize': this.file.size,
+                'totalChunks': this.file.chunks.length,
+                'filename': this.file.name
+            };
+
             // create form data to send
             const formData = new FormData();
-            // add chunk to from data
+            // append parameter to formdata
+            for (let parameter in params) {
+                formData.append(parameter, String(params[parameter]));
+            }
+            // add chunk to form data
             formData.append('chunk', chunkData, this.file.name);
-            // set request method an url
+            // set request method and url
             connection.open('POST', this.uploader.options.endpoint);
             // initilize request
             connection.send(formData);
