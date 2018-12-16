@@ -28,7 +28,9 @@ export class NiftyUploader {
     }
 
     public upload() {
-        this.uploadNextChunk();
+        for (let i = 0; i < this.options.numberOfConcurrentUploads; i++) {
+            this.uploadNextChunk();
+        }
     }
 
     public uploadNextChunk() {
