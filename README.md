@@ -1,2 +1,2 @@
 # Nifty Uploader
-An easy file uploader for the browser written in Javascript
+An easy file uploader for the browser written in TypeScript
