@@ -14,6 +14,7 @@ export class NiftyUploader {
     //Events
     public chunkSucsessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
     public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
+    public fileQueuedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
 
     constructor(options: NiftyOptionsParameter) {
         // merge provided options with current options
@@ -43,6 +44,7 @@ export class NiftyUploader {
 
     public enqueueFile(file: NiftyFile) {
         file.status = FileStatus.QUEUED;
+        this.fileQueuedEvent.trigger({file: file});
     }
 
     public upload() {
@@ -74,6 +76,9 @@ export class NiftyUploader {
     }
     public onChunkFail(callback: (data: { chunk: NiftyChunk }) => void) {
         this.chunkFailEvent.on(callback);
+    }
+    public onFileQueued(callback: (data: { file: NiftyFile }) => void) {
+        this.fileQueuedEvent.on(callback);
     }
 
 }
