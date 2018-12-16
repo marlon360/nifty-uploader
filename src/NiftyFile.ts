@@ -42,10 +42,10 @@ export class NiftyFile {
 
     public processFile(): Promise<any> {
         let tasks = new Array<any>();
-        const uiniqueIdentiferTask = this.generateUniqueIdentifier().then(identifier => {
+        const uniqueIdentifierTask = this.generateUniqueIdentifier().then(identifier => {
             this.uniqueIdentifier = identifier;
         });
-        tasks.push(uiniqueIdentiferTask);
+        tasks.push(uniqueIdentifierTask);
         if (this.options.chunking) {
             tasks.push(this.createChunks());
         }
