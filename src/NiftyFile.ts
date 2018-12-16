@@ -67,7 +67,11 @@ export class NiftyFile {
     }
 
     private generateUniqueIdentifier() {
-        this.uniqueIdentifier = this.size + '-' + this.name.replace(/[^0-9a-zA-Z_-]/igm, '');
+        if (this.options.generateUniqueIdentifier) {
+            this.uniqueIdentifier = this.options.generateUniqueIdentifier(this);
+        } else {
+            this.uniqueIdentifier = this.size + '-' + this.name.replace(/[^0-9a-zA-Z_-]/igm, '');
+        }
     }
 
     private chunkUploadSucessfull(chunk: NiftyChunk) {
