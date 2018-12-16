@@ -57,7 +57,6 @@ test('generate unique identifier with custom function with promise', (done) => {
 
     uploader.onFileQueued((data) => {
         const uniqueIdentifier = data.file.uniqueIdentifier;
-        console.log(uniqueIdentifier);
         expect(uniqueIdentifier).toBe("promise");
     });
 
