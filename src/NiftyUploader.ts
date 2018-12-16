@@ -15,7 +15,7 @@ export class NiftyUploader {
     public chunkSucsessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
     public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
 
-    constructor(options?: NiftyOptionsParameter) {
+    constructor(options: NiftyOptionsParameter) {
         // merge provided options with current options
         this.options = { ...this.options, ...options };
         this.setupEventHandler();
