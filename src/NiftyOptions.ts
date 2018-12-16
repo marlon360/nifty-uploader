@@ -4,7 +4,7 @@ export interface NiftyOptionsParameter {
     chunking?: boolean;
     chunkSize?: number;
     numberOfConcurrentUploads?: number;
-    generateUniqueIdentifier?: ((file: NiftyFile) => string);
+    generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
     endpoint: string;
 }
 
@@ -12,7 +12,7 @@ export interface NiftyOptions extends NiftyOptionsParameter {
     chunking: boolean;
     chunkSize: number;
     numberOfConcurrentUploads: number;
-    generateUniqueIdentifier?: ((file: NiftyFile) => string);
+    generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
     endpoint: string;
 }
 

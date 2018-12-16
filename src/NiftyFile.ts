@@ -2,6 +2,7 @@ import { NiftyChunk } from "./NiftyChunk";
 import { NiftyUploader } from "./NiftyUploader";
 import { ChunkStatus, FileStatus } from "./NiftyStatus";
 import { NiftyOptionsParameter, NiftyOptions } from "./NiftyOptions";
+import { reject } from "q";
 
 export class NiftyFile {
 
@@ -27,26 +28,26 @@ export class NiftyFile {
         this.name = param.file.name;
         this.size = param.file.size;
         this.content = param.file;
-        
+
         this.status = FileStatus.QUEUED;
 
         // set options to uploader options
         this.options = this.uploader.options;
-        if(param.options) {
+        if (param.options) {
             // override options with file options
             this.options = { ...this.options, ...param.options };
         }
 
     }
 
-    public processFile(): Promise<string> {
-        return new Promise((resolve, reject) => {
-            if (this.options.chunking) {
-                this.generateUniqueIdentifier();
-                this.createChunks();
-            }
-            resolve();
-        });
+    public processFile(): Promise<any> {
+        let tasks = new Array<any>();
+        tasks.push(this.generateUniqueIdentifier());
+        if (this.options.chunking) {
+            tasks.push(this.createChunks());
+        }
+        return Promise.all<any>(tasks);
+
     }
 
     public upload(): boolean {
@@ -66,11 +67,14 @@ export class NiftyFile {
         return false;
     }
 
-    private generateUniqueIdentifier() {
+    private generateUniqueIdentifier(): Promise<any> {
         if (this.options.generateUniqueIdentifier) {
-            this.uniqueIdentifier = this.options.generateUniqueIdentifier(this);
+            return Promise.resolve(this.options.generateUniqueIdentifier(this)).then((uniqueIdentifier) => {
+                this.uniqueIdentifier = uniqueIdentifier;
+            })
         } else {
             this.uniqueIdentifier = this.size + '-' + this.name.replace(/[^0-9a-zA-Z_-]/igm, '');
+            return Promise.resolve();
         }
     }
 
