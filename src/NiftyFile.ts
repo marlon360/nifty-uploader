@@ -13,6 +13,7 @@ export class NiftyFile {
     public content: Blob;
 
     public status: FileStatus;
+    public uniqueIdentifier: string;
 
     public chunks: NiftyChunk[] = new Array<NiftyChunk>();
 
@@ -41,6 +42,7 @@ export class NiftyFile {
     public processFile(): Promise<string> {
         return new Promise((resolve, reject) => {
             if (this.options.chunking) {
+                this.generateUniqueIdentifier();
                 this.createChunks();
             }
             resolve();
@@ -64,6 +66,9 @@ export class NiftyFile {
         return false;
     }
 
+    private generateUniqueIdentifier() {
+        this.uniqueIdentifier = this.size + '-' + this.name.replace(/[^0-9a-zA-Z_-]/igm, '');
+    }
 
     private chunkUploadSucessfull(chunk: NiftyChunk) {
         if (this.areAllChunksUploaded()) {

@@ -65,7 +65,8 @@ export class NiftyChunk {
                 'chunkIndex': this.chunkIndex,
                 'totalSize': this.file.size,
                 'totalChunks': this.file.chunks.length,
-                'filename': this.file.name
+                'filename': this.file.name,
+                'identifier': this.file.uniqueIdentifier
             };
 
             // create form data to send
