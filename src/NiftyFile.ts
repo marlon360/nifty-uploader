@@ -42,7 +42,10 @@ export class NiftyFile {
 
     public processFile(): Promise<any> {
         let tasks = new Array<any>();
-        tasks.push(this.generateUniqueIdentifier());
+        const uiniqueIdentiferTask = this.generateUniqueIdentifier().then(identifier => {
+            this.uniqueIdentifier = identifier;
+        });
+        tasks.push(uiniqueIdentiferTask);
         if (this.options.chunking) {
             tasks.push(this.createChunks());
         }
@@ -67,14 +70,12 @@ export class NiftyFile {
         return false;
     }
 
-    private generateUniqueIdentifier(): Promise<any> {
+    private generateUniqueIdentifier(): Promise<string> {
         if (this.options.generateUniqueIdentifier) {
-            return Promise.resolve(this.options.generateUniqueIdentifier(this)).then((uniqueIdentifier) => {
-                this.uniqueIdentifier = uniqueIdentifier;
-            })
+            return Promise.resolve(this.options.generateUniqueIdentifier(this));
         } else {
-            this.uniqueIdentifier = this.size + '-' + this.name.replace(/[^0-9a-zA-Z_-]/igm, '');
-            return Promise.resolve();
+            const defaultUniqueIdentifier = this.size + '-' + this.name.replace(/[^0-9a-zA-Z_-]/igm, '');
+            return Promise.resolve(defaultUniqueIdentifier);
         }
     }
 
