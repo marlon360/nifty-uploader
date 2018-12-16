@@ -1,10 +1,12 @@
 import { NiftyChunk } from "./NiftyChunk";
 import { NiftyUploader } from "./NiftyUploader";
 import { ChunkStatus, FileStatus } from "./NiftyStatus";
+import { NiftyOptionsParameter, NiftyOptions } from "./NiftyOptions";
 
 export class NiftyFile {
 
     public uploader: NiftyUploader;
+    public options: NiftyOptions;
 
     public name: string;
     public size: number;
@@ -18,6 +20,7 @@ export class NiftyFile {
     constructor(param: {
         uploader: NiftyUploader,
         file: File,
+        options?: NiftyOptionsParameter
     }) {
         this.uploader = param.uploader;
         this.name = param.file.name;
@@ -26,6 +29,14 @@ export class NiftyFile {
 
         this.createChunks();
         this.status = FileStatus.QUEUED;
+
+        // set options to uploader options
+        this.options = this.uploader.options;
+        if(param.options) {
+            // override options with file options
+            this.options = { ...this.options, ...param.options };
+        }
+
     }
 
     public upload(): boolean {

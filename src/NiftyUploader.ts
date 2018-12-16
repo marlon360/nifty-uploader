@@ -21,9 +21,9 @@ export class NiftyUploader {
         this.setupEventHandler();
     }
 
-    public addFiles(files: File[]): void {
+    public addFiles(files: File[], options?: NiftyOptionsParameter): void {
         files.forEach((file: File) => {
-            this.files.push(new NiftyFile({ uploader: this, file: file }));
+            this.files.push(new NiftyFile({ uploader: this, file: file, options: options }));
         });
     }
 
