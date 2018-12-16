@@ -26,6 +26,10 @@ export class NiftyUploader {
             this.files.push(new NiftyFile({ uploader: this, file: file, options: options }));
         });
     }
+    
+    public addFile(file: File, options?: NiftyOptionsParameter): void {
+        this.addFiles([file], options);
+    }
 
     public upload() {
         for (let i = 0; i < this.options.numberOfConcurrentUploads; i++) {
