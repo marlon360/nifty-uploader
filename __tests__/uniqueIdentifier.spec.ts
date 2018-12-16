@@ -1,7 +1,7 @@
 import { NiftyUploader } from '../src/NiftyUploader';
 import { NiftyFile } from '../src/NiftyFile';
 
-test('generate unique identifier default', () => {
+test('generate unique identifier default', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({
         endpoint: "endpoint"
@@ -11,6 +11,7 @@ test('generate unique identifier default', () => {
     uploader.onFileQueued((data) => {
         const uniqueIdentifier = data.file.uniqueIdentifier;
         expect(uniqueIdentifier).toBe(file.size + "-" + file.name);
+        done();
     });
 
     // add a test file
@@ -18,7 +19,7 @@ test('generate unique identifier default', () => {
     
 });
 
-test('generate unique identifier with custom function', () => {
+test('generate unique identifier with custom function', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({
         endpoint: "endpoint",
@@ -31,6 +32,33 @@ test('generate unique identifier with custom function', () => {
     uploader.onFileQueued((data) => {
         const uniqueIdentifier = data.file.uniqueIdentifier;
         expect(uniqueIdentifier).toBe(file.name);
+        done();
+    });
+
+    // add a test file
+    uploader.addFiles([file]);
+    
+});
+
+test('generate unique identifier with custom function with promise', (done) => {
+    // new uploader instance
+    const uploader = new NiftyUploader({
+        endpoint: "endpoint",
+        generateUniqueIdentifier: (file: NiftyFile) => {
+            return new Promise<string>((resolve, reject) => {
+                setTimeout(() => {
+                    resolve("promise");
+                    done();
+                }, 500);
+            });
+        }
+    });
+    const file = new File(["content"], "filename");
+
+    uploader.onFileQueued((data) => {
+        const uniqueIdentifier = data.file.uniqueIdentifier;
+        console.log(uniqueIdentifier);
+        expect(uniqueIdentifier).toBe("promise");
     });
 
     // add a test file
