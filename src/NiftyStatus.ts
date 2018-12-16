@@ -5,6 +5,8 @@ export enum ChunkStatus {
     FAILED
 }
 export enum FileStatus {
+    ADDED,
+    PROCESSING,
     QUEUED,
     UPLOADING,
     SUCCESSFUL,

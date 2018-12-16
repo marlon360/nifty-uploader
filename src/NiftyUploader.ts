@@ -25,6 +25,7 @@ export class NiftyUploader {
         files.forEach((file: File) => {
             const addedFile = new NiftyFile({ uploader: this, file: file, options: options });
             this.files.push(addedFile);
+            addedFile.status = FileStatus.ADDED;
             this.processFile(addedFile);
         });
     }
@@ -34,7 +35,14 @@ export class NiftyUploader {
     }
 
     public processFile(file: NiftyFile) {
-        file.processFile();
+        file.status = FileStatus.PROCESSING;
+        file.processFile().then(() => {
+            this.enqueueFile(file);
+        });
+    }
+
+    public enqueueFile(file: NiftyFile) {
+        file.status = FileStatus.QUEUED;
     }
 
     public upload() {
