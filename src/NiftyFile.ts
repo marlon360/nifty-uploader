@@ -1,13 +1,12 @@
 import { NiftyChunk } from "./NiftyChunk";
-import { NiftyUploader } from "./NiftyUploader";
+import { INiftyOptions, INiftyOptionsParameter } from "./NiftyOptions";
 import { ChunkStatus, FileStatus } from "./NiftyStatus";
-import { NiftyOptionsParameter, NiftyOptions } from "./NiftyOptions";
-import { reject } from "q";
+import { NiftyUploader } from "./NiftyUploader";
 
 export class NiftyFile {
 
     public uploader: NiftyUploader;
-    public options: NiftyOptions;
+    public options: INiftyOptions;
 
     public name: string;
     public size: number;
@@ -18,11 +17,10 @@ export class NiftyFile {
 
     public chunks: NiftyChunk[] = new Array<NiftyChunk>();
 
-
     constructor(param: {
         uploader: NiftyUploader,
         file: File,
-        options?: NiftyOptionsParameter
+        options?: INiftyOptionsParameter
     }) {
         this.uploader = param.uploader;
         this.name = param.file.name;
@@ -41,8 +39,8 @@ export class NiftyFile {
     }
 
     public processFile(): Promise<any> {
-        let tasks = new Array<any>();
-        const uniqueIdentifierTask = this.generateUniqueIdentifier().then(identifier => {
+        const tasks = new Array<any>();
+        const uniqueIdentifierTask = this.generateUniqueIdentifier().then((identifier) => {
             this.uniqueIdentifier = identifier;
         });
         tasks.push(uniqueIdentifierTask);
@@ -57,12 +55,12 @@ export class NiftyFile {
         const chunkCount = this.chunks.length;
         for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
             const chunk = this.chunks[chunkIndex];
-            if (chunk.status == ChunkStatus.QUEUED) {
+            if (chunk.status === ChunkStatus.QUEUED) {
                 chunk.upload().then(() => {
                     this.chunkUploadSucessfull(chunk);
                 }).catch((error) => {
                     this.chunkUploadFailed(chunk, error);
-                })
+                });
                 this.status = FileStatus.UPLOADING;
                 return true;
             }
@@ -74,28 +72,27 @@ export class NiftyFile {
         if (this.options.generateUniqueIdentifier) {
             return Promise.resolve(this.options.generateUniqueIdentifier(this));
         } else {
-            const defaultUniqueIdentifier = this.size + '-' + this.name.replace(/[^0-9a-zA-Z_-]/igm, '');
+            const defaultUniqueIdentifier = this.size + "-" + this.name.replace(/[^0-9a-zA-Z_-]/igm, "");
             return Promise.resolve(defaultUniqueIdentifier);
         }
     }
 
     private chunkUploadSucessfull(chunk: NiftyChunk) {
         if (this.areAllChunksUploaded()) {
-            this.status == FileStatus.SUCCESSFUL;
+            this.status = FileStatus.SUCCESSFUL;
         }
-        this.uploader.chunkSucsessEvent.trigger({ chunk: chunk });
+        this.uploader.chunkSucsessEvent.trigger({ chunk });
     }
     private chunkUploadFailed(chunk: NiftyChunk, error: string | Error) {
         this.status = FileStatus.FAILED;
-        this.uploader.chunkFailEvent.trigger({ chunk: chunk });
+        this.uploader.chunkFailEvent.trigger({ chunk });
     }
-
 
     private areAllChunksUploaded(): boolean {
         const chunkCount = this.chunks.length;
         for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
             const chunk = this.chunks[chunkIndex];
-            if (chunk.status != ChunkStatus.SUCCESSFUL) {
+            if (chunk.status !== ChunkStatus.SUCCESSFUL) {
                 return false;
             }
         }
@@ -115,10 +112,10 @@ export class NiftyFile {
             const endByte = Math.min(this.size, (chunkIndex + 1) * this.uploader.options.chunkSize);
             // create chunk object and add to array
             this.chunks.push(new NiftyChunk({
-                file: this,
                 chunkIndex,
+                endByte,
+                file: this,
                 startByte,
-                endByte
             }));
         }
     }

@@ -1,6 +1,6 @@
 import { NiftyFile } from "./NiftyFile";
 
-export interface NiftyOptionsParameter {
+export interface INiftyOptionsParameter {
     chunking?: boolean;
     chunkSize?: number;
     numberOfConcurrentUploads?: number;
@@ -8,7 +8,7 @@ export interface NiftyOptionsParameter {
     endpoint?: string;
 }
 
-export interface NiftyOptions extends NiftyOptionsParameter {
+export interface INiftyOptions extends INiftyOptionsParameter {
     chunking: boolean;
     chunkSize: number;
     numberOfConcurrentUploads: number;
@@ -16,13 +16,13 @@ export interface NiftyOptions extends NiftyOptionsParameter {
     endpoint: string;
 }
 
-export class NiftyDefaultOptions implements NiftyOptionsParameter {
+export class NiftyDefaultOptions implements INiftyOptionsParameter {
     // chuning enabled
-    chunking = true;
+    public chunking = true;
     // 2 MB for chunks
-    chunkSize = 2 * 1024 * 1024;
+    public chunkSize = 2 * 1024 * 1024;
     // 3 concurrent uploads
-    numberOfConcurrentUploads = 3;
+    public numberOfConcurrentUploads = 3;
     // the default endpoint for uplaods
-    endpoint = '/';
+    public endpoint = "/";
 }
