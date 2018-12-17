@@ -6,6 +6,5 @@ declare interface Blob {
 declare interface File {
     webkitRelativePath: string | undefined;
     relativePath: string | undefined;
-    uniqueIdentifier: string | undefined;
     fileName: string | undefined;
 }

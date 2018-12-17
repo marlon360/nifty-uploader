@@ -11,7 +11,7 @@ export class NiftyUploader {
     // initilize options with default options
     public options: NiftyOptions = new NiftyDefaultOptions();
     // whether the browser support html5 file system api.
-    public isSupport: boolean = false;
+    public isSupported: boolean = false;
 
     //Events
     public chunkSucsessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
@@ -23,15 +23,15 @@ export class NiftyUploader {
         // merge provided options with current options
         this.options = { ...this.options, ...options };
         this.setupEventHandler();
-        this.support();
+        this.checkSupport();
     }
     // check whether the browser support.
     // - File object type
     // - Blob object type
     // - FileList object type
     // - slicing files
-    private support(): void {
-        this.isSupport = (
+    private checkSupport(): void {
+        this.isSupported = (
             (typeof (File) !== 'undefined')
             &&
             (typeof (Blob) !== 'undefined')
