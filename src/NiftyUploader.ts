@@ -10,16 +10,36 @@ export class NiftyUploader {
     public files: Array<NiftyFile> = new Array<NiftyFile>();
     // initilize options with default options
     public options: NiftyOptions = new NiftyDefaultOptions();
+    // whether the browser support html5 file system api.
+    public isSupport: boolean = false;
 
     //Events
     public chunkSucsessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
     public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
     public fileQueuedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
 
-    constructor(options: NiftyOptionsParameter) {
+    // I think because of default options, options is not required for user.
+    constructor(options?: NiftyOptionsParameter) {
         // merge provided options with current options
         this.options = { ...this.options, ...options };
         this.setupEventHandler();
+        this.support();
+    }
+    // check whether the browser support.
+    // - File object type
+    // - Blob object type
+    // - FileList object type
+    // - slicing files
+    private support(): void {
+        this.isSupport = (
+            (typeof (File) !== 'undefined')
+            &&
+            (typeof (Blob) !== 'undefined')
+            &&
+            (typeof (FileList) !== 'undefined')
+            &&
+            (!!Blob.prototype.webkitSlice || !!Blob.prototype.mozSlice || !!Blob.prototype.slice || false)
+        );
     }
 
     public addFiles(files: File[], options?: NiftyOptionsParameter): void {
@@ -44,7 +64,7 @@ export class NiftyUploader {
 
     public enqueueFile(file: NiftyFile) {
         file.status = FileStatus.QUEUED;
-        this.fileQueuedEvent.trigger({file: file});
+        this.fileQueuedEvent.trigger({ file: file });
     }
 
     public upload() {
