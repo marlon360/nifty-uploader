@@ -1,10 +1,13 @@
 declare interface Blob {
-    webkitSlice: any;
-    mozSlice: any;
+    // for safari 5.1
+    webkitSlice?: (start?: number, end?: number, contentType?: string) => Blob;
+    // for firefox 6 - 13
+    mozSlice?: (start?: number, end?: number, contentType?: string) => Blob;
 }
 
 declare interface File {
-    webkitRelativePath: string | undefined;
-    relativePath: string | undefined;
-    fileName: string | undefined;
+    webkitRelativePath?: string;
+    relativePath?: string;
+    // for < firefox 7
+    fileName?: string;
 }
