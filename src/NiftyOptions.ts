@@ -5,7 +5,7 @@ export interface NiftyOptionsParameter {
     chunkSize?: number;
     numberOfConcurrentUploads?: number;
     generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
-    endpoint: string;
+    endpoint?: string;
 }
 
 export interface NiftyOptions extends NiftyOptionsParameter {
@@ -23,5 +23,6 @@ export class NiftyDefaultOptions implements NiftyOptionsParameter {
     chunkSize = 2 * 1024 * 1024;
     // 3 concurrent uploads
     numberOfConcurrentUploads = 3;
-    endpoint: string;
+    // the default endpoint for uplaods
+    endpoint = '/';
 }

@@ -18,7 +18,6 @@ export class NiftyUploader {
     public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
     public fileQueuedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
 
-    // I think because of default options, options is not required for user.
     constructor(options?: NiftyOptionsParameter) {
         // merge provided options with current options
         this.options = { ...this.options, ...options };
