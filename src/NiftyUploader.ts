@@ -16,6 +16,8 @@ export class NiftyUploader {
     // Events
     public chunkSucsessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
     public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
+    public fileSucsessEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
+    public fileFailEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileQueuedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
 
     constructor(options?: INiftyOptionsParameter) {
@@ -77,6 +79,12 @@ export class NiftyUploader {
     public onFileQueued(callback: (data: { file: NiftyFile }) => void) {
         this.fileQueuedEvent.on(callback);
     }
+    public onFileSuccess(callback: (data: { file: NiftyFile }) => void) {
+        this.fileSucsessEvent.on(callback);
+    }
+    public onFileFail(callback: (data: { file: NiftyFile }) => void) {
+        this.fileFailEvent.on(callback);
+    }
     // check whether the browser support.
     // - File object type
     // - Blob object type
@@ -95,7 +103,10 @@ export class NiftyUploader {
     }
 
     private setupEventHandler() {
-        this.chunkSucsessEvent.on((data: { chunk: NiftyChunk }) => {
+        this.onChunkSuccess((data: { chunk: NiftyChunk }) => {
+            this.uploadNextChunk();
+        });
+        this.onFileSuccess((data: { file: NiftyFile }) => {
             this.uploadNextChunk();
         });
     }
