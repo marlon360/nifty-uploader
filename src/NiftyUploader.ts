@@ -108,6 +108,8 @@ export class NiftyUploader {
                             numberOfConnections++;
                         }
                     }
+                } else {
+                    numberOfConnections++;
                 }
             }
         }
