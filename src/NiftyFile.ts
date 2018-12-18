@@ -68,16 +68,23 @@ export class NiftyFile extends UploadElement {
                 }
             }
         } else {
-            this.uploadData({
-                data: this.content,
-                endpoint: this.options.endpoint,
-                requestParameter: {}
-            }).then(() => {
+            this.uploadData(this.content)
+            .then(() => {
                 // file sucessfully uploaded
             }).catch(() => {
                 // file upload failed
             });
         }
+    }
+
+    // override method
+    protected getRequestParameter(): { [key: string]: string | number } {
+        const params = {
+            filename: this.name,
+            identifier: this.uniqueIdentifier
+        };
+        // merge params
+        return {...super.getRequestParameter(), ...params};
     }
 
     private generateUniqueIdentifier(): Promise<string> {

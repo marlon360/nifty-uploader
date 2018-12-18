@@ -1,12 +1,11 @@
+import { INiftyOptions } from "./NiftyOptions";
+
 export abstract class UploadElement {
+    public options: INiftyOptions;
 
     protected connection: XMLHttpRequest;
 
-    protected uploadData(param: {
-        data: Blob,
-        requestParameter: { [key: string]: string | number },
-        endpoint: string
-    }): Promise<string | Error> {
+    protected uploadData(data: Blob): Promise<string | Error> {
 
         return new Promise<string | Error>((resolve, reject) => {
 
@@ -30,17 +29,28 @@ export abstract class UploadElement {
 
             // create form data to send
             const formData = new FormData();
+
+            // request parameter
+            const requestParameter = this.getRequestParameter();
             // append parameter to formdata
-            for (const parameter of Object.keys(param.requestParameter)) {
-                formData.append(parameter, String(param.requestParameter[parameter]));
+            for (const parameter of Object.keys(requestParameter)) {
+                formData.append(parameter, String(requestParameter[parameter]));
             }
             // add chunk to form data
-            formData.append("blob", param.data, "blob");
+            formData.append("blob", data, "blob");
             // set request method and url
-            this.connection.open("POST", param.endpoint);
+            this.connection.open("POST", this.getEndpoint());
             // initilize request
             this.connection.send(formData);
         });
+    }
+
+    protected getRequestParameter(): { [key: string]: string | number } {
+        return {};
+    }
+
+    protected getEndpoint(): string {
+        return this.options.endpoint;
     }
 
 }

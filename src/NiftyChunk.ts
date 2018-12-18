@@ -42,21 +42,8 @@ export class NiftyChunk extends UploadElement {
             // slice file
             const chunkData: Blob = this.sliceFile();
 
-            // parameter
-            const params: { [key: string]: string | number } = {
-                chunkIndex: this.chunkIndex,
-                filename: this.file.name,
-                identifier: this.file.uniqueIdentifier,
-                totalChunks: this.file.chunks.length,
-                totalSize: this.file.size,
-            };
-
             // upload chunk
-            this.uploadData({
-                data: chunkData,
-                endpoint: this.file.options.endpoint,
-                requestParameter: params
-            }).then(() => {
+            this.uploadData(chunkData).then(() => {
                 this.status = ChunkStatus.SUCCESSFUL;
                 resolve();
             }).catch(() => {
@@ -65,6 +52,19 @@ export class NiftyChunk extends UploadElement {
             });
 
         });
+    }
+
+    // override method
+    protected getRequestParameter(): { [key: string]: string | number } {
+        const params = {
+            chunkIndex: this.chunkIndex,
+            filename: this.file.name,
+            identifier: this.file.uniqueIdentifier,
+            totalChunks: this.file.chunks.length,
+            totalSize: this.file.size,
+        };
+        // merge params
+        return {...super.getRequestParameter(), ...params};
     }
 
     private sliceFile(): Blob {
