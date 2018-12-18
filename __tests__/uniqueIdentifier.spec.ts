@@ -4,7 +4,8 @@ import { NiftyFile } from '../src/NiftyFile';
 test('generate unique identifier default', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({
-        endpoint: "endpoint"
+        endpoint: "endpoint",
+        autoUpload: false,
     });
     const file = new File(["content"], "filename");
 
@@ -23,6 +24,7 @@ test('generate unique identifier with custom function', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({
         endpoint: "endpoint",
+        autoUpload: false,
         generateUniqueIdentifier: (file: NiftyFile) => {
             return file.name;
         }
@@ -44,6 +46,7 @@ test('generate unique identifier with custom function with promise', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({
         endpoint: "endpoint",
+        autoUpload: false,
         generateUniqueIdentifier: (file: NiftyFile) => {
             return new Promise<string>((resolve, reject) => {
                 setTimeout(() => {
