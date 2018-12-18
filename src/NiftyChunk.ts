@@ -46,7 +46,7 @@ export class NiftyChunk {
                     resolve();
                 } else {
                     this.status = ChunkStatus.FAILED;
-                    resolve();
+                    reject();
                 }
             };
             const onRequestError = () => {
