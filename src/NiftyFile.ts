@@ -54,13 +54,14 @@ export class NiftyFile extends UploadElement {
     }
 
     public upload() {
+        // if chunking is enabled, upload next queued chunk
         if (this.options.chunking) {
             const chunkCount = this.chunks.length;
             for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
                 const chunk = this.chunks[chunkIndex];
                 if (chunk.status === ChunkStatus.QUEUED) {
                     chunk.upload().then(() => {
-                        this.chunkUploadSucessfull(chunk);
+                        this.chunkUploadSucessful(chunk);
                     }).catch((error) => {
                         this.chunkUploadFailed(chunk, error);
                     });
@@ -68,11 +69,14 @@ export class NiftyFile extends UploadElement {
                 }
             }
         } else {
+            // if chunking diabled, upload whole file
             this.uploadData(this.content)
             .then(() => {
                 // file sucessfully uploaded
+                this.fileUploadSucessful();
             }).catch(() => {
                 // file upload failed
+                this.fileUploadFailed();
             });
         }
     }
@@ -96,15 +100,33 @@ export class NiftyFile extends UploadElement {
         }
     }
 
-    private chunkUploadSucessfull(chunk: NiftyChunk) {
-        if (this.areAllChunksUploaded()) {
-            this.status = FileStatus.SUCCESSFUL;
-        }
+    private fileUploadSucessful() {
+        // change status
+        this.status = FileStatus.SUCCESSFUL;
+        // trigger event
+        this.uploader.fileSucsessEvent.trigger({ file: this });
+    }
+
+    private fileUploadFailed() {
+        // change status
+        this.status = FileStatus.FAILED;
+        // trigger event
+        this.uploader.fileFailEvent.trigger({ file: this });
+    }
+
+    private chunkUploadSucessful(chunk: NiftyChunk) {
+        // trigger event
         this.uploader.chunkSucsessEvent.trigger({ chunk });
+        // if all chunks uploaded, file success
+        if (this.areAllChunksUploaded()) {
+            this.fileUploadSucessful();
+        }
     }
     private chunkUploadFailed(chunk: NiftyChunk, error: string | Error) {
-        this.status = FileStatus.FAILED;
+        // trigger event
         this.uploader.chunkFailEvent.trigger({ chunk });
+        // if one chunk fails, file fails
+        this.fileUploadFailed();
     }
 
     private areAllChunksUploaded(): boolean {
