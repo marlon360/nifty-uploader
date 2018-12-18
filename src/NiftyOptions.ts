@@ -8,6 +8,7 @@ export interface INiftyOptionsParameter {
     endpoint?: string;
     customRequestParameters?: { [key: string]: string | number };
     autoUpload?: boolean;
+    autoQueue?: boolean;
 }
 
 export interface INiftyOptions extends INiftyOptionsParameter {
@@ -18,6 +19,7 @@ export interface INiftyOptions extends INiftyOptionsParameter {
     endpoint: string;
     customRequestParameters: { [key: string]: string | number };
     autoUpload: boolean;
+    autoQueue: boolean;
 }
 
 export class NiftyDefaultOptions implements INiftyOptionsParameter {
@@ -33,4 +35,6 @@ export class NiftyDefaultOptions implements INiftyOptionsParameter {
     public customRequestParameters = {};
     // enable auto upload
     public autoUpload = true;
+    // enable auto queue
+    public autoQueue = true;
 }
