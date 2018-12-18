@@ -9,9 +9,7 @@ jobs:
     - stage: "Test"
       name: "Unit Tests"
       script: npm test
-    - stage: "Lint"
       name: "Lint"
       script: npm run lint
-    - stage: "Build"
       name: "Build"
       script: npm run build
