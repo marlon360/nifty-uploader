@@ -66,6 +66,8 @@ export class NiftyFile extends UploadElement {
                         this.chunkUploadFailed(chunk, error);
                     });
                     this.status = FileStatus.UPLOADING;
+                    // just upload one chunk
+                    return;
                 }
             }
         } else {

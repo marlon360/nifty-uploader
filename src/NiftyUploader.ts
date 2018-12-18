@@ -134,10 +134,10 @@ export class NiftyUploader {
 
     private setupEventHandler() {
         this.onChunkSuccess((data: { chunk: NiftyChunk }) => {
-            this.uploadNextChunk();
+            this.upload();
         });
         this.onFileSuccess((data: { file: NiftyFile }) => {
-            this.uploadNextChunk();
+            this.upload();
         });
     }
 
