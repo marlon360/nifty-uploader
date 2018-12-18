@@ -2,8 +2,9 @@ import { NiftyChunk } from "./NiftyChunk";
 import { INiftyOptions, INiftyOptionsParameter } from "./NiftyOptions";
 import { ChunkStatus, FileStatus } from "./NiftyStatus";
 import { NiftyUploader } from "./NiftyUploader";
+import { UploadElement } from "./UploadElement";
 
-export class NiftyFile {
+export class NiftyFile extends UploadElement {
 
     public uploader: NiftyUploader;
     public options: INiftyOptions;
@@ -22,6 +23,7 @@ export class NiftyFile {
         file: File,
         options?: INiftyOptionsParameter
     }) {
+        super();
         this.uploader = param.uploader;
         this.name = param.file.name;
         this.size = param.file.size;
@@ -51,21 +53,31 @@ export class NiftyFile {
 
     }
 
-    public upload(): boolean {
-        const chunkCount = this.chunks.length;
-        for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
-            const chunk = this.chunks[chunkIndex];
-            if (chunk.status === ChunkStatus.QUEUED) {
-                chunk.upload().then(() => {
-                    this.chunkUploadSucessfull(chunk);
-                }).catch((error) => {
-                    this.chunkUploadFailed(chunk, error);
-                });
-                this.status = FileStatus.UPLOADING;
-                return true;
+    public upload() {
+        if (this.options.chunking) {
+            const chunkCount = this.chunks.length;
+            for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
+                const chunk = this.chunks[chunkIndex];
+                if (chunk.status === ChunkStatus.QUEUED) {
+                    chunk.upload().then(() => {
+                        this.chunkUploadSucessfull(chunk);
+                    }).catch((error) => {
+                        this.chunkUploadFailed(chunk, error);
+                    });
+                    this.status = FileStatus.UPLOADING;
+                }
             }
+        } else {
+            this.uploadData({
+                data: this.content,
+                endpoint: this.options.endpoint,
+                requestParameter: {}
+            }).then(() => {
+                // file sucessfully uploaded
+            }).catch(() => {
+                // file upload failed
+            });
         }
-        return false;
     }
 
     private generateUniqueIdentifier(): Promise<string> {
