@@ -6,10 +6,10 @@ cache:
   - node_modules
 jobs:  
   include:
-    - stage: "Test"
+    - stage: "Tests"
       name: "Unit Tests"
       script: npm test
-      name: "Lint"
-      script: npm run lint
+    - script: npm run lint   
+      name: "Syntax Linting"
+    - script: npm run build   
       name: "Build"
-      script: npm run build
