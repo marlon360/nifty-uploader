@@ -7,6 +7,7 @@ export interface INiftyOptionsParameter {
     generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
     endpoint?: string;
     customRequestParameters?: { [key: string]: string | number };
+    autoUpload?: boolean;
 }
 
 export interface INiftyOptions extends INiftyOptionsParameter {
@@ -16,6 +17,7 @@ export interface INiftyOptions extends INiftyOptionsParameter {
     generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
     endpoint: string;
     customRequestParameters: { [key: string]: string | number };
+    autoUpload: boolean;
 }
 
 export class NiftyDefaultOptions implements INiftyOptionsParameter {
@@ -27,6 +29,8 @@ export class NiftyDefaultOptions implements INiftyOptionsParameter {
     public numberOfConcurrentUploads = 3;
     // the default endpoint for uplaods
     public endpoint = "/";
-    // no custom parameters as default
+    // no custom parameters
     public customRequestParameters = {};
+    // enable auto upload
+    public autoUpload = true;
 }

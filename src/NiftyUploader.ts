@@ -2,7 +2,7 @@ import { NiftyChunk } from "./NiftyChunk";
 import { NiftyEvent } from "./NiftyEvent";
 import { NiftyFile } from "./NiftyFile";
 import { INiftyOptions, INiftyOptionsParameter, NiftyDefaultOptions } from "./NiftyOptions";
-import { FileStatus } from "./NiftyStatus";
+import { ChunkStatus, FileStatus } from "./NiftyStatus";
 
 export class NiftyUploader {
 
@@ -50,10 +50,15 @@ export class NiftyUploader {
     public enqueueFile(file: NiftyFile) {
         file.status = FileStatus.QUEUED;
         this.fileQueuedEvent.trigger({ file });
+        if (this.options.autoUpload) {
+            this.upload();
+        }
     }
 
     public upload() {
-        for (let i = 0; i < this.options.numberOfConcurrentUploads; i++) {
+        const activeConnections = this.activeConnectionCount();
+        const freeConnections = this.options.numberOfConcurrentUploads - activeConnections;
+        for (let i = 0; i < freeConnections; i++) {
             this.uploadNextChunk();
         }
     }
@@ -84,6 +89,22 @@ export class NiftyUploader {
     }
     public onFileFail(callback: (data: { file: NiftyFile }) => void) {
         this.fileFailEvent.on(callback);
+    }
+
+    private activeConnectionCount(): number {
+        let numberOfConnections = 0;
+        for (const file of this.files) {
+            if (file.status === FileStatus.UPLOADING) {
+                if (file.chunks.length > 0) {
+                    for (const chunk of file.chunks) {
+                        if (chunk.status === ChunkStatus.UPLOADING) {
+                            numberOfConnections++;
+                        }
+                    }
+                }
+            }
+        }
+        return numberOfConnections;
     }
     // check whether the browser support.
     // - File object type
