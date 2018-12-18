@@ -27,6 +27,7 @@ export class NiftyChunk extends UploadElement {
         this.file = param.file;
         this.chunkIndex = param.chunkIndex;
         this.startByte = param.startByte;
+        this.options = param.file.options;
         this.endByte = param.endByte;
         // set initial status to queued
         this.status = ChunkStatus.QUEUED;
