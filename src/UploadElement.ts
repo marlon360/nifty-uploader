@@ -46,7 +46,7 @@ export abstract class UploadElement {
     }
 
     protected getRequestParameter(): { [key: string]: string | number } {
-        return {};
+        return this.options.customRequestParameters;
     }
 
     protected getEndpoint(): string {
