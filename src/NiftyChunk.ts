@@ -78,7 +78,7 @@ export class NiftyChunk {
             // add chunk to form data
             formData.append("chunk", chunkData, this.file.name);
             // set request method and url
-            connection.open("POST", this.uploader.options.endpoint);
+            connection.open("POST", this.file.options.endpoint);
             // initilize request
             connection.send(formData);
         });
