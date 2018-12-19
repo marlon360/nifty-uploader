@@ -47,6 +47,7 @@ export class NiftyUploader {
     public processFile(file: NiftyFile) {
         file.status = FileStatus.PROCESSING;
         file.processFile().then(() => {
+            file.status = FileStatus.PROCESSED;
             if (file.options.autoQueue) {
                 this.enqueueFile(file);
             }

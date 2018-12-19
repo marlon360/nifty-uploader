@@ -7,6 +7,7 @@ export enum ChunkStatus {
 export enum FileStatus {
     ADDED,
     PROCESSING,
+    PROCESSED,
     QUEUED,
     UPLOADING,
     SUCCESSFUL,
