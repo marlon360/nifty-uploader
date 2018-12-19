@@ -14,5 +14,5 @@ module.exports = {
         "json",
         "node"
     ],
-    "coverageReporters": ["text-summary"]
+    "coverageReporters": ["json"]
 }
