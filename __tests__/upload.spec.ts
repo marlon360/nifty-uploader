@@ -36,3 +36,43 @@ test('chunk upload should fail', (done) => {
     uploader.addFile(file);
     
 });
+
+test('file upload without chunking should succeed', (done) => {
+
+    const mockXHR = createMockXHR();
+    (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
+
+    // new uploader instance
+    const uploader = new NiftyUploader({
+        chunking: false
+    });
+    const file = new File(["content"], "filename");
+
+    uploader.onFileSuccess((data) => {
+        expect(data.file.name).toBe(file.name);
+        done();
+    });
+
+    uploader.addFile(file);
+    
+});
+
+test('file upload without chunking should fail', (done) => {
+
+    const mockXHR = createMockXHR(500);
+    (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
+
+    // new uploader instance
+    const uploader = new NiftyUploader({
+        chunking: false
+    });
+    const file = new File(["content"], "filename");
+
+    uploader.onFileFail((data) => {
+        expect(data.file.name).toBe(file.name);
+        done();
+    });
+
+    uploader.addFile(file);
+    
+});
