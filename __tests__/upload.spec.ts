@@ -37,6 +37,43 @@ test('chunk upload should fail', (done) => {
     
 });
 
+test('chunk upload should fail because of xhr error', (done) => {
+
+    const mockXHR = createMockXHR(500, true);
+    (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
+
+    // new uploader instance
+    const uploader = new NiftyUploader();
+    const file = new File(["content"], "filename");
+
+    uploader.onChunkFail((data) => {
+        expect(data.chunk.file.name).toBe(file.name);
+        done();
+    });
+
+    uploader.addFile(file);
+    
+});
+
+
+test('chunk upload should fail because of xhr timeout', (done) => {
+
+    const mockXHR = createMockXHR(500, false, true);
+    (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
+
+    // new uploader instance
+    const uploader = new NiftyUploader();
+    const file = new File(["content"], "filename");
+
+    uploader.onChunkFail((data) => {
+        expect(data.chunk.file.name).toBe(file.name);
+        done();
+    });
+
+    uploader.addFile(file);
+    
+});
+
 test('file upload without chunking should succeed', (done) => {
 
     const mockXHR = createMockXHR();
