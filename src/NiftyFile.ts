@@ -52,8 +52,8 @@ export class NiftyFile extends UploadElement {
         return Promise.all<any>(tasks);
 
     }
-
-    public upload() {
+    // returns true when an upload started
+    public upload(): boolean {
         // if chunking is enabled, upload next queued chunk
         if (this.options.chunking) {
             const chunkCount = this.chunks.length;
@@ -67,7 +67,7 @@ export class NiftyFile extends UploadElement {
                     });
                     this.status = FileStatus.UPLOADING;
                     // just upload one chunk
-                    return;
+                    return true;
                 }
             }
         } else {
@@ -80,7 +80,9 @@ export class NiftyFile extends UploadElement {
                 // file upload failed
                 this.fileUploadFailed();
             });
+            return true;
         }
+        return false;
     }
 
     // override method

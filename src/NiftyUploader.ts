@@ -75,8 +75,10 @@ export class NiftyUploader {
         for (let fileIndex = 0; fileIndex < filesCount; fileIndex++) {
             const file = this.files[fileIndex];
             if (file.status === FileStatus.QUEUED || file.status === FileStatus.UPLOADING) {
-                file.upload();
-                return;
+                if (file.upload()) {
+                    // exit function after first file for upload found
+                    return;
+                }
             }
         }
     }
