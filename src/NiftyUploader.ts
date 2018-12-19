@@ -66,11 +66,11 @@ export class NiftyUploader {
         const activeConnections = this.activeConnectionCount();
         const freeConnections = this.options.numberOfConcurrentUploads - activeConnections;
         for (let i = 0; i < freeConnections; i++) {
-            this.uploadNextChunk();
+            this.uploadNextQueuedElement();
         }
     }
 
-    public uploadNextChunk() {
+    public uploadNextQueuedElement() {
         const filesCount = this.files.length;
         for (let fileIndex = 0; fileIndex < filesCount; fileIndex++) {
             const file = this.files[fileIndex];
