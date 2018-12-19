@@ -14,5 +14,8 @@ module.exports = {
         "json",
         "node"
     ],
-    "coverageReporters": ["json"]
+    "collectCoverageFrom": [
+        "src/**/*.ts",
+        "!src/typings/*"
+    ]
 }
