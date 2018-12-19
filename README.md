@@ -1,3 +1,4 @@
 # Nifty Uploader
-[![Build Status](https://travis-ci.org/marlon360/nifty-uploader.svg?branch=master)](https://travis-ci.org/marlon360/nifty-uploader)  
+[![Build Status](https://travis-ci.org/marlon360/nifty-uploader.svg?branch=master)](https://travis-ci.org/marlon360/nifty-uploader)
+[![codecov](https://codecov.io/gh/marlon360/nifty-uploader/branch/master/graph/badge.svg)](https://codecov.io/gh/marlon360/nifty-uploader)  
 An easy file uploader for the browser written in TypeScript.
