@@ -23,9 +23,9 @@ export abstract class UploadElement {
             const onRequestError = () => {
                 reject();
             };
-            this.connection.addEventListener("load", onRequestComplete, false);
-            this.connection.addEventListener("error", onRequestError, false);
-            this.connection.addEventListener("timeout", onRequestError, false);
+            this.connection.onload = onRequestComplete;
+            this.connection.onerror = onRequestError;
+            this.connection.ontimeout = onRequestError;
 
             // create form data to send
             const formData = new FormData();
