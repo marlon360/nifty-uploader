@@ -11,5 +11,9 @@ jobs:
       script: npm test
     - script: npm run lint   
       name: "Syntax Linting"
+    - scripts:
+      - npm install codecov -g
+      - npm run coverage
+      - codecov -f coverage/*.json
     - script: npm run build   
       name: "Build"
