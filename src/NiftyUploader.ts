@@ -34,7 +34,9 @@ export class NiftyUploader {
             this.files.push(addedFile);
             addedFile.status = FileStatus.ADDED;
             this.fileAddedEvent.trigger({ file: addedFile });
-            this.processFile(addedFile);
+            if (this.options.autoProcess) {
+                this.processFile(addedFile);
+            }
         });
     }
 
