@@ -16,3 +16,5 @@ jobs:
       - npm run coverage
       - codecov -f coverage/*.json
       name: Code Coverage
+    - script: npm run build   
+      name: "Build"
