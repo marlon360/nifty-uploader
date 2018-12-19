@@ -9,6 +9,7 @@
     "build-umd": "parcel build src/index.js --out-dir lib/umd --out-file nifty-uploader.js --experimental-scope-hoisting",
     "build": "npm run build-esm && npm run build-umd",
     "test": "jest",
+    "coverage": "jest --coverage",
     "lint": "tslint --project .",
     "lint-fix": "tslint --project . --fix"
   },
