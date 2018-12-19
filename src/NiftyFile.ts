@@ -128,7 +128,7 @@ export class NiftyFile extends UploadElement {
     }
     private chunkUploadFailed(chunk: NiftyChunk, error: string | Error) {
         // trigger event
-        this.uploader.chunkFailEvent.trigger({ chunk });
+        this.uploader.chunkFailEvent.trigger({ chunk, error });
         // if one chunk fails, file fails
         this.fileUploadFailed();
     }

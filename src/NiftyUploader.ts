@@ -15,7 +15,7 @@ export class NiftyUploader {
 
     // Events
     public chunkSucsessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
-    public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
+    public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk, error: string | Error }> = new NiftyEvent();
     public fileSucsessEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileFailEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileQueuedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
@@ -87,7 +87,7 @@ export class NiftyUploader {
     public onChunkSuccess(callback: (data: { chunk: NiftyChunk }) => void) {
         this.chunkSucsessEvent.on(callback);
     }
-    public onChunkFail(callback: (data: { chunk: NiftyChunk }) => void) {
+    public onChunkFail(callback: (data: { chunk: NiftyChunk, error: string | Error }) => void) {
         this.chunkFailEvent.on(callback);
     }
     public onFileQueued(callback: (data: { file: NiftyFile }) => void) {

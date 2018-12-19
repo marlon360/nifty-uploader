@@ -47,9 +47,9 @@ export class NiftyChunk extends UploadElement {
             this.uploadData(chunkData).then(() => {
                 this.status = ChunkStatus.SUCCESSFUL;
                 resolve();
-            }).catch(() => {
+            }).catch((error) => {
                 this.status = ChunkStatus.FAILED;
-                reject();
+                reject(error);
             });
 
         });
