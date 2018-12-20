@@ -65,7 +65,10 @@ export class NiftyFile extends UploadElement {
                     }).catch((error) => {
                         this.chunkUploadFailed(chunk, error);
                     });
-                    this.status = FileStatus.UPLOADING;
+                    if (this.status !== FileStatus.UPLOADING) {
+                        this.status = FileStatus.UPLOADING;
+                        this.uploader.fileUploadStartedEvent.trigger({file: this});
+                    }
                     // just upload one chunk
                     return true;
                 }
@@ -80,6 +83,8 @@ export class NiftyFile extends UploadElement {
                 // file upload failed
                 this.fileUploadFailed();
             });
+            this.status = FileStatus.UPLOADING;
+            this.uploader.fileUploadStartedEvent.trigger({file: this});
             return true;
         }
         return false;

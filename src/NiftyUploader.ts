@@ -20,6 +20,7 @@ export class NiftyUploader {
     public fileFailEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileQueuedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileAddedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
+    public fileUploadStartedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
 
     constructor(options?: INiftyOptionsParameter) {
         // merge provided options with current options
@@ -95,6 +96,9 @@ export class NiftyUploader {
     }
     public onFileAdded(callback: (data: { file: NiftyFile }) => void) {
         this.fileAddedEvent.on(callback);
+    }
+    public onFileUploadStarted(callback: (data: { file: NiftyFile }) => void) {
+        this.fileUploadStartedEvent.on(callback);
     }
     public onFileSuccess(callback: (data: { file: NiftyFile }) => void) {
         this.fileSucsessEvent.on(callback);
