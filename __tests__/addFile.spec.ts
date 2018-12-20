@@ -27,3 +27,21 @@ test('add multiple file to uploader', () => {
     // length should mow be 1
     expect(uploader.files.length).toBe(2);
 });
+
+test('file added event', (done) => {
+
+    const file = new File([], "testfile");
+    // new uploader instance
+    const uploader = new NiftyUploader({
+        autoUpload: false
+    });
+
+    uploader.onFileAdded((data) => {
+        expect(data.file.name).toBe(file.name);
+        done();
+    });
+
+    // add a test file
+    uploader.addFile(file);
+    
+});
