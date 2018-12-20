@@ -7,7 +7,9 @@ test('chunk upload should succeed', (done) => {
     (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
 
     // new uploader instance
-    const uploader = new NiftyUploader();
+    const uploader = new NiftyUploader({
+        chunkSize: 1
+    });
     const file = new File(["content"], "filename");
 
     uploader.onChunkSuccess((data) => {
