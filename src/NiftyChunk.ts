@@ -55,6 +55,18 @@ export class NiftyChunk extends UploadElement {
         });
     }
 
+    // override
+    public cancel() {
+        if (!this.isComplete()) {
+            super.cancel();
+            this.status = ChunkStatus.CANCELED;
+        }
+    }
+
+    public isComplete() {
+        return this.status === ChunkStatus.FAILED || this.status === ChunkStatus.SUCCESSFUL;
+    }
+
     // override method
     protected getRequestParameter(): { [key: string]: string | number } {
         const params = {
@@ -65,7 +77,7 @@ export class NiftyChunk extends UploadElement {
             totalSize: this.file.size,
         };
         // merge params
-        return {...super.getRequestParameter(), ...params};
+        return { ...super.getRequestParameter(), ...params };
     }
 
     private sliceFile(): Blob {

@@ -5,6 +5,12 @@ export abstract class UploadElement {
 
     protected connection: XMLHttpRequest;
 
+    public cancel() {
+        if (this.connection) {
+            this.connection.abort();
+        }
+    }
+
     protected uploadData(data: Blob): Promise<string | Error> {
 
         return new Promise<string | Error>((resolve, reject) => {

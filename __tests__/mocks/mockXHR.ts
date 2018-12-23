@@ -13,7 +13,8 @@ export const createMockXHR = (status: number = 200, error: boolean = false, time
                 this.onload();
             }
         }),
-        status:  status
+        status:  status,
+        abort: jest.fn()
     }
     return mockXHR;
 }
