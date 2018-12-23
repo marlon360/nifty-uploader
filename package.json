@@ -6,7 +6,7 @@
   "types": "lib/types/entry.d.ts",
   "scripts": {
     "build-esm": "tsc",
-    "build-umd": "parcel build src/browser.js --out-dir lib/umd --out-file nifty-uploader.js --experimental-scope-hoisting",
+    "build-umd": "parcel build src/browser.js --out-dir lib --out-file nifty-uploader.js --experimental-scope-hoisting",
     "build": "npm run build-esm && npm run build-umd",
     "test": "jest",
     "coverage": "jest --coverage",
