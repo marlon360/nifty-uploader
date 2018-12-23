@@ -57,8 +57,14 @@ export class NiftyChunk extends UploadElement {
 
     // override
     public cancel() {
-        super.cancel();
-        this.status = ChunkStatus.CANCELED;
+        if (!this.isComplete()) {
+            super.cancel();
+            this.status = ChunkStatus.CANCELED;
+        }
+    }
+
+    public isComplete() {
+        return this.status === ChunkStatus.FAILED || this.status === ChunkStatus.SUCCESSFUL;
     }
 
     // override method
@@ -71,7 +77,7 @@ export class NiftyChunk extends UploadElement {
             totalSize: this.file.size,
         };
         // merge params
-        return {...super.getRequestParameter(), ...params};
+        return { ...super.getRequestParameter(), ...params };
     }
 
     private sliceFile(): Blob {

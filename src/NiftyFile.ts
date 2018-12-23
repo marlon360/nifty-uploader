@@ -67,7 +67,7 @@ export class NiftyFile extends UploadElement {
                     });
                     if (this.status !== FileStatus.UPLOADING) {
                         this.status = FileStatus.UPLOADING;
-                        this.uploader.fileUploadStartedEvent.trigger({file: this});
+                        this.uploader.fileUploadStartedEvent.trigger({ file: this });
                     }
                     // just upload one chunk
                     return true;
@@ -76,15 +76,15 @@ export class NiftyFile extends UploadElement {
         } else {
             // if chunking diabled, upload whole file
             this.uploadData(this.content)
-            .then(() => {
-                // file sucessfully uploaded
-                this.fileUploadSucessful();
-            }).catch(() => {
-                // file upload failed
-                this.fileUploadFailed();
-            });
+                .then(() => {
+                    // file sucessfully uploaded
+                    this.fileUploadSucessful();
+                }).catch(() => {
+                    // file upload failed
+                    this.fileUploadFailed();
+                });
             this.status = FileStatus.UPLOADING;
-            this.uploader.fileUploadStartedEvent.trigger({file: this});
+            this.uploader.fileUploadStartedEvent.trigger({ file: this });
             return true;
         }
         return false;
@@ -92,12 +92,18 @@ export class NiftyFile extends UploadElement {
 
     // override
     public cancel() {
-        super.cancel();
-        for (const chunk of this.chunks) {
-            chunk.cancel();
+        if (!this.isComplete()) {
+            super.cancel();
+            for (const chunk of this.chunks) {
+                chunk.cancel();
+            }
+            this.status = FileStatus.CANCELED;
+            this.uploader.fileCanceledEvent.trigger({ file: this });
         }
-        this.status = FileStatus.CANCELED;
-        this.uploader.fileCanceledEvent.trigger({ file: this });
+    }
+
+    public isComplete() {
+        return this.status === FileStatus.FAILED || this.status === FileStatus.SUCCESSFUL;
     }
 
     // override method
@@ -107,7 +113,7 @@ export class NiftyFile extends UploadElement {
             identifier: this.uniqueIdentifier
         };
         // merge params
-        return {...super.getRequestParameter(), ...params};
+        return { ...super.getRequestParameter(), ...params };
     }
 
     private generateUniqueIdentifier(): Promise<string> {
