@@ -2,7 +2,8 @@ export enum ChunkStatus {
     QUEUED,
     UPLOADING,
     SUCCESSFUL,
-    FAILED
+    FAILED,
+    CANCELED
 }
 export enum FileStatus {
     ADDED,
@@ -11,5 +12,6 @@ export enum FileStatus {
     QUEUED,
     UPLOADING,
     SUCCESSFUL,
-    FAILED
+    FAILED,
+    CANCELED
 }

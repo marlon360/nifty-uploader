@@ -90,6 +90,15 @@ export class NiftyFile extends UploadElement {
         return false;
     }
 
+    // override
+    public cancel() {
+        super.cancel();
+        for (const chunk of this.chunks) {
+            chunk.cancel();
+        }
+        this.status = FileStatus.CANCELED;
+    }
+
     // override method
     protected getRequestParameter(): { [key: string]: string | number } {
         const params = {

@@ -55,6 +55,12 @@ export class NiftyChunk extends UploadElement {
         });
     }
 
+    // override
+    public cancel() {
+        super.cancel();
+        this.status = ChunkStatus.CANCELED;
+    }
+
     // override method
     protected getRequestParameter(): { [key: string]: string | number } {
         const params = {

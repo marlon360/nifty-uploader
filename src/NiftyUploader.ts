@@ -84,6 +84,12 @@ export class NiftyUploader {
         }
     }
 
+    public cancelAll() {
+        for (const file of this.files) {
+            file.cancel();
+        }
+    }
+
     // Events
     public onChunkSuccess(callback: (data: { chunk: NiftyChunk }) => void) {
         this.chunkSucsessEvent.on(callback);
