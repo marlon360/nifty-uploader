@@ -97,6 +97,7 @@ export class NiftyFile extends UploadElement {
             chunk.cancel();
         }
         this.status = FileStatus.CANCELED;
+        this.uploader.fileCanceledEvent.trigger({ file: this });
     }
 
     // override method
