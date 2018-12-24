@@ -1,6 +1,6 @@
 import { NiftyUploader } from '../src/NiftyUploader';
 import { createMockXHR } from './mocks/mockXHR';
-import { FileStatus, ChunkStatus } from '../src/NiftyStatus';
+import { NiftyStatus } from '../src/NiftyStatus';
 
 test('cancel upload', (done) => {
 
@@ -14,7 +14,7 @@ test('cancel upload', (done) => {
     const file = new File(["content"], "filename");
 
     uploader.onFileCanceled((data) => {
-        expect(data.file.status).toBe(FileStatus.CANCELED);
+        expect(data.file.status).toBe(NiftyStatus.CANCELED);
         done();
     })
 
@@ -39,7 +39,7 @@ test('cancel completed upload', (done) => {
 
     uploader.onFileSuccess((data) => {
         data.file.cancel();
-        expect(data.file.status).toBe(FileStatus.SUCCESSFUL);
+        expect(data.file.status).toBe(NiftyStatus.SUCCESSFUL);
         done();
     });
 
@@ -60,7 +60,7 @@ test('cancel completed chunk', (done) => {
 
     uploader.onChunkSuccess((data) => {
         data.chunk.cancel();
-        expect(data.chunk.status).toBe(ChunkStatus.SUCCESSFUL);
+        expect(data.chunk.status).toBe(NiftyStatus.SUCCESSFUL);
         done();
     });
 
@@ -80,7 +80,7 @@ test('cancel all uploads', (done) => {
     const file = new File(["content"], "filename");
 
     uploader.onFileCanceled((data) => {
-        expect(data.file.status).toBe(FileStatus.CANCELED);
+        expect(data.file.status).toBe(NiftyStatus.CANCELED);
         done();
     })
 

@@ -1,6 +1,6 @@
 import { NiftyEvent } from "./NiftyEvent";
 import { NiftyFile } from "./NiftyFile";
-import { ChunkStatus } from "./NiftyStatus";
+import { NiftyStatus } from "./NiftyStatus";
 import { NiftyUploader } from "./NiftyUploader";
 import { UploadElement } from "./UploadElement";
 
@@ -11,7 +11,7 @@ export class NiftyChunk extends UploadElement {
 
     public chunkIndex: number;
 
-    public status: ChunkStatus;
+    public status: NiftyStatus;
 
     private startByte: number;
     private endByte: number;
@@ -30,7 +30,7 @@ export class NiftyChunk extends UploadElement {
         this.options = param.file.options;
         this.endByte = param.endByte;
         // set initial status to queued
-        this.status = ChunkStatus.QUEUED;
+        this.status = NiftyStatus.QUEUED;
     }
 
     public upload(): Promise<string | Error> {
@@ -38,17 +38,17 @@ export class NiftyChunk extends UploadElement {
         return new Promise<string | Error>((resolve, reject) => {
 
             // set status to uploading
-            this.status = ChunkStatus.UPLOADING;
+            this.status = NiftyStatus.UPLOADING;
 
             // slice file
             const chunkData: Blob = this.sliceFile();
 
             // upload chunk
             this.uploadData(chunkData).then(() => {
-                this.status = ChunkStatus.SUCCESSFUL;
+                this.status = NiftyStatus.SUCCESSFUL;
                 resolve();
             }).catch((error) => {
-                this.status = ChunkStatus.FAILED;
+                this.status = NiftyStatus.FAILED;
                 reject(error);
             });
 
@@ -59,12 +59,12 @@ export class NiftyChunk extends UploadElement {
     public cancel() {
         if (!this.isComplete()) {
             super.cancel();
-            this.status = ChunkStatus.CANCELED;
+            this.status = NiftyStatus.CANCELED;
         }
     }
 
     public isComplete() {
-        return this.status === ChunkStatus.FAILED || this.status === ChunkStatus.SUCCESSFUL;
+        return this.status === NiftyStatus.FAILED || this.status === NiftyStatus.SUCCESSFUL;
     }
 
     // override method

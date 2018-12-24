@@ -2,7 +2,7 @@ import { NiftyChunk } from "./NiftyChunk";
 import { NiftyEvent } from "./NiftyEvent";
 import { NiftyFile } from "./NiftyFile";
 import { INiftyOptions, INiftyOptionsParameter, NiftyDefaultOptions } from "./NiftyOptions";
-import { ChunkStatus, FileStatus } from "./NiftyStatus";
+import { NiftyStatus } from "./NiftyStatus";
 
 export class NiftyUploader {
 
@@ -34,7 +34,7 @@ export class NiftyUploader {
         files.forEach((file: File) => {
             const addedFile = new NiftyFile({ uploader: this, file, options });
             this.files.push(addedFile);
-            addedFile.status = FileStatus.ADDED;
+            addedFile.status = NiftyStatus.ADDED;
             this.fileAddedEvent.trigger({ file: addedFile });
             if (this.options.autoProcess) {
                 this.processFile(addedFile);
@@ -47,9 +47,9 @@ export class NiftyUploader {
     }
 
     public processFile(file: NiftyFile) {
-        file.status = FileStatus.PROCESSING;
+        file.status = NiftyStatus.PROCESSING;
         file.processFile().then(() => {
-            file.status = FileStatus.PROCESSED;
+            file.status = NiftyStatus.PROCESSED;
             if (file.options.autoQueue) {
                 this.enqueueFile(file);
             }
@@ -57,7 +57,7 @@ export class NiftyUploader {
     }
 
     public enqueueFile(file: NiftyFile) {
-        file.status = FileStatus.QUEUED;
+        file.status = NiftyStatus.QUEUED;
         this.fileQueuedEvent.trigger({ file });
         if (this.options.autoUpload) {
             this.upload();
@@ -76,7 +76,7 @@ export class NiftyUploader {
         const filesCount = this.files.length;
         for (let fileIndex = 0; fileIndex < filesCount; fileIndex++) {
             const file = this.files[fileIndex];
-            if (file.status === FileStatus.QUEUED || file.status === FileStatus.UPLOADING) {
+            if (file.status === NiftyStatus.QUEUED || file.status === NiftyStatus.UPLOADING) {
                 if (file.upload()) {
                     // exit function after first file for upload found
                     return;
@@ -120,10 +120,10 @@ export class NiftyUploader {
     private activeConnectionCount(): number {
         let numberOfConnections = 0;
         for (const file of this.files) {
-            if (file.status === FileStatus.UPLOADING) {
+            if (file.status === NiftyStatus.UPLOADING) {
                 if (file.chunks.length > 0) {
                     for (const chunk of file.chunks) {
-                        if (chunk.status === ChunkStatus.UPLOADING) {
+                        if (chunk.status === NiftyStatus.UPLOADING) {
                             numberOfConnections++;
                         }
                     }

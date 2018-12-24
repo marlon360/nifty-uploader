@@ -1,2 +1,2 @@
 export { NiftyUploader } from "./NiftyUploader";
-export { FileStatus } from "./NiftyStatus";
+export { NiftyStatus } from "./NiftyStatus";

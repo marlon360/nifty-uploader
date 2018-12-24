@@ -1,6 +1,6 @@
 import { NiftyChunk } from "./NiftyChunk";
 import { INiftyOptions, INiftyOptionsParameter } from "./NiftyOptions";
-import { ChunkStatus, FileStatus } from "./NiftyStatus";
+import { NiftyStatus } from "./NiftyStatus";
 import { NiftyUploader } from "./NiftyUploader";
 import { UploadElement } from "./UploadElement";
 
@@ -13,7 +13,7 @@ export class NiftyFile extends UploadElement {
     public size: number;
     public content: Blob;
 
-    public status: FileStatus;
+    public status: NiftyStatus;
     public uniqueIdentifier: string;
 
     public chunks: NiftyChunk[] = new Array<NiftyChunk>();
@@ -29,7 +29,7 @@ export class NiftyFile extends UploadElement {
         this.size = param.file.size;
         this.content = param.file;
 
-        this.status = FileStatus.QUEUED;
+        this.status = NiftyStatus.QUEUED;
 
         // set options to uploader options
         this.options = this.uploader.options;
@@ -59,14 +59,14 @@ export class NiftyFile extends UploadElement {
             const chunkCount = this.chunks.length;
             for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
                 const chunk = this.chunks[chunkIndex];
-                if (chunk.status === ChunkStatus.QUEUED) {
+                if (chunk.status === NiftyStatus.QUEUED) {
                     chunk.upload().then(() => {
                         this.chunkUploadSucessful(chunk);
                     }).catch((error) => {
                         this.chunkUploadFailed(chunk, error);
                     });
-                    if (this.status !== FileStatus.UPLOADING) {
-                        this.status = FileStatus.UPLOADING;
+                    if (this.status !== NiftyStatus.UPLOADING) {
+                        this.status = NiftyStatus.UPLOADING;
                         this.uploader.fileUploadStartedEvent.trigger({ file: this });
                     }
                     // just upload one chunk
@@ -83,7 +83,7 @@ export class NiftyFile extends UploadElement {
                     // file upload failed
                     this.fileUploadFailed();
                 });
-            this.status = FileStatus.UPLOADING;
+            this.status = NiftyStatus.UPLOADING;
             this.uploader.fileUploadStartedEvent.trigger({ file: this });
             return true;
         }
@@ -97,13 +97,13 @@ export class NiftyFile extends UploadElement {
             for (const chunk of this.chunks) {
                 chunk.cancel();
             }
-            this.status = FileStatus.CANCELED;
+            this.status = NiftyStatus.CANCELED;
             this.uploader.fileCanceledEvent.trigger({ file: this });
         }
     }
 
     public isComplete() {
-        return this.status === FileStatus.FAILED || this.status === FileStatus.SUCCESSFUL;
+        return this.status === NiftyStatus.FAILED || this.status === NiftyStatus.SUCCESSFUL;
     }
 
     // override method
@@ -127,14 +127,14 @@ export class NiftyFile extends UploadElement {
 
     private fileUploadSucessful() {
         // change status
-        this.status = FileStatus.SUCCESSFUL;
+        this.status = NiftyStatus.SUCCESSFUL;
         // trigger event
         this.uploader.fileSucsessEvent.trigger({ file: this });
     }
 
     private fileUploadFailed() {
         // change status
-        this.status = FileStatus.FAILED;
+        this.status = NiftyStatus.FAILED;
         // trigger event
         this.uploader.fileFailEvent.trigger({ file: this });
     }
@@ -158,7 +158,7 @@ export class NiftyFile extends UploadElement {
         const chunkCount = this.chunks.length;
         for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
             const chunk = this.chunks[chunkIndex];
-            if (chunk.status !== ChunkStatus.SUCCESSFUL) {
+            if (chunk.status !== NiftyStatus.SUCCESSFUL) {
                 return false;
             }
         }

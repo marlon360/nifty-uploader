@@ -1,11 +1,4 @@
-export enum ChunkStatus {
-    QUEUED,
-    UPLOADING,
-    SUCCESSFUL,
-    FAILED,
-    CANCELED
-}
-export enum FileStatus {
+export enum NiftyStatus {
     ADDED,
     PROCESSING,
     PROCESSED,
