@@ -45,22 +45,28 @@ export abstract class UploadElement {
                     this.status = NiftyStatus.SUCCESSFUL;
                     resolve();
                 } else {
-                    // if maximum of retries reached, element failed
-                    if (this.currentRetries >= this.options.maxRetries) {
+                    // do not retry on permanent error
+                    if (this.options.permanentError.indexOf(this.connection.status) > -1) {
                         this.status = NiftyStatus.FAILED;
                         reject();
                     } else {
-                        // wait for retry
-                        this.status = NiftyStatus.PENDING_RETRY;
-                        // increment number of retries
-                        this.currentRetries++;
-                        // delay retry by specified time
-                        setTimeout(() => {
-                            // queue element
-                            this.status = NiftyStatus.QUEUED;
-                            // upload next element
-                            this.uploader.upload();
-                        }, this.options.retryDelay);
+                        // if maximum of retries reached, element failed
+                        if (this.currentRetries >= this.options.maxRetries) {
+                            this.status = NiftyStatus.FAILED;
+                            reject();
+                        } else {
+                            // wait for retry
+                            this.status = NiftyStatus.PENDING_RETRY;
+                            // increment number of retries
+                            this.currentRetries++;
+                            // delay retry by specified time
+                            setTimeout(() => {
+                                // queue element
+                                this.status = NiftyStatus.QUEUED;
+                                // upload next element
+                                this.uploader.upload();
+                            }, this.options.retryDelay);
+                        }
                     }
                 }
             };

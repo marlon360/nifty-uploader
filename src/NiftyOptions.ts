@@ -12,6 +12,7 @@ export interface INiftyOptionsParameter {
     autoProcess?: boolean;
     maxRetries?: number;
     retryDelay?: number;
+    permanentError?: number[];
 }
 
 export interface INiftyOptions extends INiftyOptionsParameter {
@@ -25,7 +26,8 @@ export interface INiftyOptions extends INiftyOptionsParameter {
     autoQueue: boolean;
     autoProcess: boolean;
     maxRetries: number;
-    retryDelay?: number;
+    retryDelay: number;
+    permanentError: number[];
 }
 
 export class NiftyDefaultOptions implements INiftyOptionsParameter {
@@ -49,4 +51,6 @@ export class NiftyDefaultOptions implements INiftyOptionsParameter {
     public maxRetries = 3;
     // delay retry by 100ms
     public retryDelay = 100;
+    // if status code equals 400, 404, 409, 415, 500, 501 upload failed and do not retry
+    public permanentError = [400, 404, 409, 415, 500, 501];
 }
