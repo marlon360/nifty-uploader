@@ -65,6 +65,10 @@ export class NiftyChunk extends UploadElement {
         return { ...super.getRequestParameter(), ...params };
     }
 
+    protected triggerRetryEvent() {
+        this.uploader.chunkRetryEvent.trigger({ chunk: this });
+    };
+
     private sliceFile(): Blob {
         return this.file.content.slice(this.startByte, this.endByte, "application/octet-stream");
     }

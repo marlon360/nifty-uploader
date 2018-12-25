@@ -59,6 +59,8 @@ export abstract class UploadElement {
                             this.status = NiftyStatus.PENDING_RETRY;
                             // increment number of retries
                             this.currentRetries++;
+                            // trigger retry event
+                            this.triggerRetryEvent();
                             // delay retry by specified time
                             setTimeout(() => {
                                 // queue element
@@ -103,5 +105,7 @@ export abstract class UploadElement {
     protected getEndpoint(): string {
         return this.options.endpoint;
     }
+
+    protected abstract triggerRetryEvent(): void;
 
 }

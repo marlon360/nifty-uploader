@@ -114,6 +114,10 @@ export class NiftyFile extends UploadElement {
         return { ...super.getRequestParameter(), ...params };
     }
 
+    protected triggerRetryEvent() {
+        this.uploader.fileRetryEvent.trigger({ file: this });
+    };
+
     private generateUniqueIdentifier(): Promise<string> {
         if (this.options.generateUniqueIdentifier) {
             return Promise.resolve(this.options.generateUniqueIdentifier(this));
