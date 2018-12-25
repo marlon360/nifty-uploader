@@ -1,14 +1,30 @@
 import { INiftyOptions } from "./NiftyOptions";
+import { NiftyStatus } from "./NiftyStatus";
 
 export abstract class UploadElement {
     public options: INiftyOptions;
+    public status: NiftyStatus;
 
     protected connection: XMLHttpRequest;
 
-    public cancel() {
-        if (this.connection) {
-            this.connection.abort();
+    public cancel(): boolean {
+        // if element upload not completed
+        if (!this.isComplete()) {
+            // if xhr connection active, abort it
+            if (this.connection) {
+                this.connection.abort();
+            }
+            // set status to canceled
+            this.status = NiftyStatus.CANCELED;
+            // sucessfully canceled
+            return true;
         }
+        // not canceled, because upload already completed
+        return false;
+    }
+
+    public isComplete() {
+        return this.status === NiftyStatus.FAILED || this.status === NiftyStatus.SUCCESSFUL;
     }
 
     protected uploadData(data: Blob): Promise<string | Error> {
@@ -21,12 +37,15 @@ export abstract class UploadElement {
             // request event handler
             const onRequestComplete = () => {
                 if (this.connection.status === 200 || this.connection.status === 201) {
+                    this.status = NiftyStatus.SUCCESSFUL;
                     resolve();
                 } else {
+                    this.status = NiftyStatus.FAILED;
                     reject();
                 }
             };
             const onRequestError = () => {
+                this.status = NiftyStatus.FAILED;
                 reject();
             };
             this.connection.onload = onRequestComplete;

@@ -91,19 +91,18 @@ export class NiftyFile extends UploadElement {
     }
 
     // override
-    public cancel() {
-        if (!this.isComplete()) {
-            super.cancel();
-            for (const chunk of this.chunks) {
-                chunk.cancel();
-            }
-            this.status = NiftyStatus.CANCELED;
-            this.uploader.fileCanceledEvent.trigger({ file: this });
+    public cancel(): boolean {
+        // cancel all chunks that are not completed
+        for (const chunk of this.chunks) {
+            chunk.cancel();
         }
-    }
-
-    public isComplete() {
-        return this.status === NiftyStatus.FAILED || this.status === NiftyStatus.SUCCESSFUL;
+        // try to cancel file
+        if (super.cancel()) {
+            // if sucessfully canceld file, trigger event
+            this.uploader.fileCanceledEvent.trigger({ file: this });
+            return true;
+        }
+        return false;
     }
 
     // override method

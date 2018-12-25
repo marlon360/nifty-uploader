@@ -26,6 +26,31 @@ test('cancel upload', (done) => {
     
 });
 
+test('cancel upload with active connection', (done) => {
+
+    let mockXHR = createMockXHR();
+    mockXHR.send = jest.fn();
+    (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
+
+    // new uploader instance
+    const uploader = new NiftyUploader({
+        chunking: false
+    });
+    const file = new File(["content"], "filename");
+
+    uploader.onFileCanceled((data) => {
+        expect(data.file.status).toBe(NiftyStatus.CANCELED);
+        done();
+    })
+
+    uploader.onFileUploadStarted((data) => {
+        data.file.cancel();
+    });
+
+    uploader.addFile(file);
+    
+});
+
 test('cancel completed upload', (done) => {
 
     const mockXHR = createMockXHR();

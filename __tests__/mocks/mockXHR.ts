@@ -1,4 +1,4 @@
-export const createMockXHR = (status: number = 200, error: boolean = false, timeout: boolean = false) => {
+export const createMockXHR = (status: number = 200, load = true, error: boolean = false, timeout: boolean = false) => {
     const mockXHR = {
         onload: jest.fn(),
         onerror: jest.fn(),
@@ -7,13 +7,13 @@ export const createMockXHR = (status: number = 200, error: boolean = false, time
         send: jest.fn(function () {
             if (error) {
                 this.onerror();
-            } else if(timeout) {
+            } else if (timeout) {
                 this.ontimeout();
-            } else {
+            } else if (load) {
                 this.onload();
             }
         }),
-        status:  status,
+        status: status,
         abort: jest.fn()
     }
     return mockXHR;

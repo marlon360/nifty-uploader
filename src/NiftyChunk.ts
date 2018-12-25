@@ -45,26 +45,12 @@ export class NiftyChunk extends UploadElement {
 
             // upload chunk
             this.uploadData(chunkData).then(() => {
-                this.status = NiftyStatus.SUCCESSFUL;
                 resolve();
             }).catch((error) => {
-                this.status = NiftyStatus.FAILED;
                 reject(error);
             });
 
         });
-    }
-
-    // override
-    public cancel() {
-        if (!this.isComplete()) {
-            super.cancel();
-            this.status = NiftyStatus.CANCELED;
-        }
-    }
-
-    public isComplete() {
-        return this.status === NiftyStatus.FAILED || this.status === NiftyStatus.SUCCESSFUL;
     }
 
     // override method
