@@ -93,6 +93,12 @@ export abstract class UploadElement {
             formData.append("blob", data, "blob");
             // set request method and url
             this.connection.open("POST", this.getEndpoint());
+
+            // set custom headers
+            for (const header of Object.keys(this.options.customHeaders)) {
+                this.connection.setRequestHeader(header, String(this.options.customHeaders[header]));
+            }
+
             // initilize request
             this.connection.send(formData);
         });

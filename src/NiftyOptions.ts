@@ -7,6 +7,7 @@ export interface INiftyOptionsParameter {
     generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
     endpoint?: string;
     customRequestParameters?: { [key: string]: string | number };
+    customHeaders?: { [key: string]: string | number };
     autoUpload?: boolean;
     autoQueue?: boolean;
     autoProcess?: boolean;
@@ -22,6 +23,7 @@ export interface INiftyOptions extends INiftyOptionsParameter {
     generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
     endpoint: string;
     customRequestParameters: { [key: string]: string | number };
+    customHeaders: { [key: string]: string | number };
     autoUpload: boolean;
     autoQueue: boolean;
     autoProcess: boolean;
@@ -41,6 +43,8 @@ export class NiftyDefaultOptions implements INiftyOptionsParameter {
     public endpoint = "/";
     // no custom parameters
     public customRequestParameters = {};
+    // no custom headers
+    public customHeaders = {};
     // enable auto upload
     public autoUpload = true;
     // enable auto queue
