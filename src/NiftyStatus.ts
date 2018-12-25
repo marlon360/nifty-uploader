@@ -4,6 +4,7 @@ export enum NiftyStatus {
     PROCESSED,
     QUEUED,
     UPLOADING,
+    PENDING_RETRY,
     SUCCESSFUL,
     FAILED,
     CANCELED

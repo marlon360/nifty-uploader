@@ -6,7 +6,6 @@ import { UploadElement } from "./UploadElement";
 
 export class NiftyChunk extends UploadElement {
 
-    public uploader: NiftyUploader;
     public file: NiftyFile;
 
     public chunkIndex: number;
@@ -64,6 +63,10 @@ export class NiftyChunk extends UploadElement {
         };
         // merge params
         return { ...super.getRequestParameter(), ...params };
+    }
+
+    protected triggerRetryEvent() {
+        this.uploader.chunkRetryEvent.trigger({ chunk: this });
     }
 
     private sliceFile(): Blob {

@@ -1,11 +1,16 @@
 import { INiftyOptions } from "./NiftyOptions";
 import { NiftyStatus } from "./NiftyStatus";
+import { NiftyUploader } from "./NiftyUploader";
 
 export abstract class UploadElement {
+
     public options: INiftyOptions;
     public status: NiftyStatus;
+    public uploader: NiftyUploader;
 
     protected connection: XMLHttpRequest;
+
+    private currentRetries = 0;
 
     public cancel(): boolean {
         // if element upload not completed
@@ -40,8 +45,31 @@ export abstract class UploadElement {
                     this.status = NiftyStatus.SUCCESSFUL;
                     resolve();
                 } else {
-                    this.status = NiftyStatus.FAILED;
-                    reject();
+                    // do not retry on permanent error
+                    if (this.options.permanentError.indexOf(this.connection.status) > -1) {
+                        this.status = NiftyStatus.FAILED;
+                        reject();
+                    } else {
+                        // if maximum of retries reached, element failed
+                        if (this.currentRetries >= this.options.maxRetries) {
+                            this.status = NiftyStatus.FAILED;
+                            reject();
+                        } else {
+                            // wait for retry
+                            this.status = NiftyStatus.PENDING_RETRY;
+                            // increment number of retries
+                            this.currentRetries++;
+                            // trigger retry event
+                            this.triggerRetryEvent();
+                            // delay retry by specified time
+                            setTimeout(() => {
+                                // queue element
+                                this.status = NiftyStatus.QUEUED;
+                                // upload next element
+                                this.uploader.upload();
+                            }, this.options.retryDelay);
+                        }
+                    }
                 }
             };
             const onRequestError = () => {
@@ -77,5 +105,7 @@ export abstract class UploadElement {
     protected getEndpoint(): string {
         return this.options.endpoint;
     }
+
+    protected abstract triggerRetryEvent(): void;
 
 }
