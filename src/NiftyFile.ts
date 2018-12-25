@@ -6,7 +6,6 @@ import { UploadElement } from "./UploadElement";
 
 export class NiftyFile extends UploadElement {
 
-    public uploader: NiftyUploader;
     public options: INiftyOptions;
 
     public name: string;

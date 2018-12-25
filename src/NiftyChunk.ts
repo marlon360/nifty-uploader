@@ -6,7 +6,6 @@ import { UploadElement } from "./UploadElement";
 
 export class NiftyChunk extends UploadElement {
 
-    public uploader: NiftyUploader;
     public file: NiftyFile;
 
     public chunkIndex: number;

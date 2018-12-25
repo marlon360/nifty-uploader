@@ -10,6 +10,8 @@ export interface INiftyOptionsParameter {
     autoUpload?: boolean;
     autoQueue?: boolean;
     autoProcess?: boolean;
+    maxRetries?: number;
+    retryDelay?: number;
 }
 
 export interface INiftyOptions extends INiftyOptionsParameter {
@@ -22,6 +24,8 @@ export interface INiftyOptions extends INiftyOptionsParameter {
     autoUpload: boolean;
     autoQueue: boolean;
     autoProcess: boolean;
+    maxRetries: number;
+    retryDelay?: number;
 }
 
 export class NiftyDefaultOptions implements INiftyOptionsParameter {
@@ -41,4 +45,8 @@ export class NiftyDefaultOptions implements INiftyOptionsParameter {
     public autoQueue = true;
     // enable auto process
     public  autoProcess = true;
+    // retry 3 times
+    public maxRetries = 3;
+    // delay retry by 100ms
+    public retryDelay = 100;
 }
