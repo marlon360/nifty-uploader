@@ -14,7 +14,8 @@ export const createMockXHR = (status: number = 200, load = true, error: boolean 
             }
         }),
         status: status,
-        abort: jest.fn()
+        abort: jest.fn(),
+        setRequestHeader: jest.fn()
     }
     return mockXHR;
 }
