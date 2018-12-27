@@ -45,6 +45,7 @@ export class NiftyFile extends UploadElement {
             this.uniqueIdentifier = identifier;
         });
         tasks.push(uniqueIdentifierTask);
+        tasks.push(this.validateFileSize());
         if (this.options.chunking) {
             tasks.push(this.createChunks());
         }
@@ -125,6 +126,20 @@ export class NiftyFile extends UploadElement {
             const defaultUniqueIdentifier = this.size + "-" + this.name.replace(/[^0-9a-zA-Z_-]/igm, "");
             return Promise.resolve(defaultUniqueIdentifier);
         }
+    }
+
+    private validateFileSize(): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            if (this.size < this.options.minFileSize) {
+                reject("File is too small. File has to be at least " + this.options.minFileSize + " Bytes.");
+            }
+            if (this.options.maxFileSize) {
+                if (this.size > this.options.maxFileSize) {
+                    reject("File is too big. Maximum file size is " + this.options.maxFileSize + " Bytes");
+                }
+            }
+            resolve();
+        });
     }
 
     private fileUploadSucessful() {

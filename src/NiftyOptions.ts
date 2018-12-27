@@ -14,6 +14,8 @@ export interface INiftyOptionsParameter {
     maxRetries?: number;
     retryDelay?: number;
     permanentError?: number[];
+    minFileSize?: number;
+    maxFileSize?: number;
 }
 
 export interface INiftyOptions extends INiftyOptionsParameter {
@@ -30,6 +32,8 @@ export interface INiftyOptions extends INiftyOptionsParameter {
     maxRetries: number;
     retryDelay: number;
     permanentError: number[];
+    minFileSize: number;
+    maxFileSize?: number;
 }
 
 export class NiftyDefaultOptions implements INiftyOptionsParameter {
@@ -57,4 +61,6 @@ export class NiftyDefaultOptions implements INiftyOptionsParameter {
     public retryDelay = 100;
     // if status code equals 400, 404, 409, 415, 500, 501 upload failed and do not retry
     public permanentError = [400, 404, 409, 415, 500, 501];
+    // file has to be at least 1 byte
+    public minFileSize = 1;
 }
