@@ -57,6 +57,7 @@ export class NiftyUploader {
                 this.enqueueFile(file);
             }
         }).catch((error) => {
+            file.status = NiftyStatus.REJECTED;
             this.fileProcessingFailedEvent.trigger({ file });
         });
     }
