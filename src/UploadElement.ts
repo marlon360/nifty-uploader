@@ -29,7 +29,7 @@ export abstract class UploadElement {
     }
 
     public isComplete() {
-        return this.status === NiftyStatus.FAILED || this.status === NiftyStatus.SUCCESSFUL;
+        return this.status === NiftyStatus.ERROR || this.status === NiftyStatus.SUCCESS;
     }
 
     protected uploadData(data: Blob): Promise<string | Error> {
@@ -42,17 +42,17 @@ export abstract class UploadElement {
             // request event handler
             const onRequestComplete = () => {
                 if (this.connection.status === 200 || this.connection.status === 201) {
-                    this.status = NiftyStatus.SUCCESSFUL;
+                    this.status = NiftyStatus.SUCCESS;
                     resolve();
                 } else {
                     // do not retry on permanent error
                     if (this.options.permanentError.indexOf(this.connection.status) > -1) {
-                        this.status = NiftyStatus.FAILED;
+                        this.status = NiftyStatus.ERROR;
                         reject();
                     } else {
                         // if maximum of retries reached, element failed
                         if (this.currentRetries >= this.options.maxRetries) {
-                            this.status = NiftyStatus.FAILED;
+                            this.status = NiftyStatus.ERROR;
                             reject();
                         } else {
                             // wait for retry
@@ -73,7 +73,7 @@ export abstract class UploadElement {
                 }
             };
             const onRequestError = () => {
-                this.status = NiftyStatus.FAILED;
+                this.status = NiftyStatus.ERROR;
                 reject();
             };
             this.connection.onload = onRequestComplete;

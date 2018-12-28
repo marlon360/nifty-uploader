@@ -154,14 +154,14 @@ export class NiftyFile extends UploadElement {
 
     private fileUploadSucessful() {
         // change status
-        this.status = NiftyStatus.SUCCESSFUL;
+        this.status = NiftyStatus.SUCCESS;
         // trigger event
         this.uploader.fileSucsessEvent.trigger({ file: this });
     }
 
     private fileUploadFailed() {
         // change status
-        this.status = NiftyStatus.FAILED;
+        this.status = NiftyStatus.ERROR;
         // trigger event
         this.uploader.fileFailEvent.trigger({ file: this });
     }
@@ -185,7 +185,7 @@ export class NiftyFile extends UploadElement {
         const chunkCount = this.chunks.length;
         for (let chunkIndex = 0; chunkIndex < chunkCount; chunkIndex++) {
             const chunk = this.chunks[chunkIndex];
-            if (chunk.status !== NiftyStatus.SUCCESSFUL) {
+            if (chunk.status !== NiftyStatus.SUCCESS) {
                 return false;
             }
         }

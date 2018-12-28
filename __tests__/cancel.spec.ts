@@ -64,7 +64,7 @@ test('cancel completed upload', (done) => {
 
     uploader.onFileSuccess((data) => {
         data.file.cancel();
-        expect(data.file.status).toBe(NiftyStatus.SUCCESSFUL);
+        expect(data.file.status).toBe(NiftyStatus.SUCCESS);
         done();
     });
 
@@ -85,7 +85,7 @@ test('cancel completed chunk', (done) => {
 
     uploader.onChunkSuccess((data) => {
         data.chunk.cancel();
-        expect(data.chunk.status).toBe(NiftyStatus.SUCCESSFUL);
+        expect(data.chunk.status).toBe(NiftyStatus.SUCCESS);
         done();
     });
 
