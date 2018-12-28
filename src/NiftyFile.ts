@@ -41,12 +41,15 @@ export class NiftyFile extends UploadElement {
 
     public processFile(): Promise<any> {
         const tasks = new Array<any>();
+
+        tasks.push(this.validateFileSize());
+        tasks.push(this.validateFileType());
+        tasks.push(this.customValidation());
+
         const uniqueIdentifierTask = this.generateUniqueIdentifier().then((identifier) => {
             this.uniqueIdentifier = identifier;
         });
         tasks.push(uniqueIdentifierTask);
-        tasks.push(this.validateFileSize());
-        tasks.push(this.validateFileType());
         if (this.options.chunking) {
             tasks.push(this.createChunks());
         }
@@ -127,6 +130,25 @@ export class NiftyFile extends UploadElement {
             const defaultUniqueIdentifier = this.size + "-" + this.name.replace(/[^0-9a-zA-Z_-]/igm, "");
             return Promise.resolve(defaultUniqueIdentifier);
         }
+    }
+
+    private customValidation(): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            if (this.options.customValidation) {
+                const validation = this.options.customValidation(this);
+                Promise.resolve(validation).then((valid) => {
+                    if (valid === undefined || valid) {
+                        resolve();
+                    } else {
+                        reject();
+                    }
+                }).catch(() => {
+                    reject();
+                });
+            } else {
+                resolve(true);
+            }
+        });
     }
 
     private validateFileSize(): Promise<boolean> {

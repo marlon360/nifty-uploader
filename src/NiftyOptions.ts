@@ -17,6 +17,7 @@ export interface INiftyOptionsParameter {
     minFileSize?: number;
     maxFileSize?: number;
     allowedFileTypes?: string[]; // accepts: .extension, extension, mime/type, mime/*
+    customValidation?: ((file: NiftyFile) => boolean | Promise<boolean>);
 }
 
 export interface INiftyOptions extends INiftyOptionsParameter {
@@ -36,6 +37,7 @@ export interface INiftyOptions extends INiftyOptionsParameter {
     minFileSize: number;
     maxFileSize?: number;
     allowedFileTypes: string[];
+    customValidation?: ((file: NiftyFile) => boolean | Promise<boolean>);
 }
 
 export class NiftyDefaultOptions implements INiftyOptionsParameter {
