@@ -21,6 +21,7 @@ export class NiftyUploader {
     public fileFailEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileRetryEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileProcessingFailedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
+    public fileProcessedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileQueuedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileAddedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileCanceledEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
@@ -53,6 +54,7 @@ export class NiftyUploader {
         file.status = NiftyStatus.PROCESSING;
         file.processFile().then(() => {
             file.status = NiftyStatus.PROCESSED;
+            this.fileProcessedEvent.trigger({ file });
             if (file.options.autoQueue) {
                 this.enqueueFile(file);
             }
@@ -109,6 +111,9 @@ export class NiftyUploader {
     }
     public onFileProcessingFailed(callback: (data: { file: NiftyFile }) => void) {
         this.fileProcessingFailedEvent.on(callback);
+    }
+    public onFileProcessed(callback: (data: { file: NiftyFile }) => void) {
+        this.fileProcessedEvent.on(callback);
     }
     public onFileQueued(callback: (data: { file: NiftyFile }) => void) {
         this.fileQueuedEvent.on(callback);
