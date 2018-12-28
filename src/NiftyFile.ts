@@ -3,6 +3,7 @@ import { INiftyOptions, INiftyOptionsParameter } from "./NiftyOptions";
 import { NiftyStatus } from "./NiftyStatus";
 import { NiftyUploader } from "./NiftyUploader";
 import { UploadElement } from "./UploadElement";
+import { Validator } from "./utils/Validator";
 
 export class NiftyFile extends UploadElement {
 
@@ -42,8 +43,8 @@ export class NiftyFile extends UploadElement {
     public processFile(): Promise<any> {
         const tasks = new Array<any>();
 
-        tasks.push(this.validateFileSize());
-        tasks.push(this.validateFileType());
+        tasks.push(Validator.validateFileSize(this.content, this.options.minFileSize, this.options.maxFileSize));
+        tasks.push(Validator.validateFileType(this.content, this.name, this.options.allowedFileTypes));
         tasks.push(this.customValidation());
 
         const uniqueIdentifierTask = this.generateUniqueIdentifier().then((identifier) => {
@@ -148,65 +149,6 @@ export class NiftyFile extends UploadElement {
             } else {
                 resolve(true);
             }
-        });
-    }
-
-    private validateFileSize(): Promise<boolean> {
-        return new Promise<boolean>((resolve, reject) => {
-            if (this.size < this.options.minFileSize) {
-                reject("File is too small. File has to be at least " + this.options.minFileSize + " Bytes.");
-            }
-            if (this.options.maxFileSize) {
-                if (this.size > this.options.maxFileSize) {
-                    reject("File is too big. Maximum file size is " + this.options.maxFileSize + " Bytes");
-                }
-            }
-            resolve();
-        });
-    }
-
-    private validateFileType(): Promise<boolean> {
-        return new Promise<boolean>((resolve, reject) => {
-            // If no extensions specified, allow every file
-            if (this.options.allowedFileTypes.length === 0) {
-                resolve();
-            }
-            // file type can be an empty string, also check filename extension
-            const actualType = this.content.type;
-
-            for (let allowedType of this.options.allowedFileTypes) {
-                // remove whitespace and lowercase every type
-                allowedType = allowedType.replace(/\s/g, "").toLowerCase();
-                // check if mime-type else it is extension
-                if (allowedType.indexOf("/") !== -1) {
-                    // check if wildcard
-                    if (allowedType.indexOf("*") !== -1) {
-                        // genaral type is for example "image" in "image/png"
-                        const allowedGeneralType = allowedType.slice(0, allowedType.indexOf("*"));
-                        // compare allowed genaral type with actual general type
-                        if (allowedGeneralType === actualType.slice(0, allowedType.indexOf("*"))) {
-                            resolve();
-                        }
-                    } else {
-                        if (allowedType === actualType) {
-                            resolve();
-                        }
-                    }
-                } else {
-                    // add dot to extension if not already
-                    const allowedExtension = ((allowedType.match(/^[^.][^/]+$/)) ? "." : "") + allowedType;
-                    // if filename contains allowed extension
-                    if (this.name.slice(this.name.indexOf(".")) === allowedExtension) {
-                        resolve();
-                    }
-                    // subtype of mime ("image/png" -> "png")
-                    const actualSubtype = actualType.slice(actualType.indexOf("/") + 1);
-                    if ("." + actualSubtype === allowedExtension) {
-                        resolve();
-                    }
-                }
-            }
-            reject("Filetype is not allowed.");
         });
     }
 
