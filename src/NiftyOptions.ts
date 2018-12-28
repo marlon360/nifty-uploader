@@ -16,6 +16,7 @@ export interface INiftyOptionsParameter {
     permanentError?: number[];
     minFileSize?: number;
     maxFileSize?: number;
+    allowedFileTypes?: string[]; // accepts: .extension, extension, mime/type, mime/*
 }
 
 export interface INiftyOptions extends INiftyOptionsParameter {
@@ -34,6 +35,7 @@ export interface INiftyOptions extends INiftyOptionsParameter {
     permanentError: number[];
     minFileSize: number;
     maxFileSize?: number;
+    allowedFileTypes: string[];
 }
 
 export class NiftyDefaultOptions implements INiftyOptionsParameter {
@@ -63,4 +65,6 @@ export class NiftyDefaultOptions implements INiftyOptionsParameter {
     public permanentError = [400, 404, 409, 415, 500, 501];
     // file has to be at least 1 byte
     public minFileSize = 1;
+    // allow every type
+    public allowedFileTypes = [];
 }

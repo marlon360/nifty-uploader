@@ -46,6 +46,7 @@ export class NiftyFile extends UploadElement {
         });
         tasks.push(uniqueIdentifierTask);
         tasks.push(this.validateFileSize());
+        tasks.push(this.validateFileType());
         if (this.options.chunking) {
             tasks.push(this.createChunks());
         }
@@ -139,6 +140,51 @@ export class NiftyFile extends UploadElement {
                 }
             }
             resolve();
+        });
+    }
+
+    private validateFileType(): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            // If no extensions specified, allow every file
+            if (this.options.allowedFileTypes.length === 0) {
+                resolve();
+            }
+            // file type can be an empty string, also check filename extension
+            const actualType = this.content.type;
+
+            for (let allowedType of this.options.allowedFileTypes) {
+                // remove whitespace and lowercase every type
+                allowedType = allowedType.replace(/\s/g, "").toLowerCase();
+                // check if mime-type else it is extension
+                if (allowedType.indexOf("/") !== -1) {
+                    // check if wildcard
+                    if (allowedType.indexOf("*") !== -1) {
+                        // genaral type is for example "image" in "image/png"
+                        const allowedGeneralType = allowedType.slice(0, allowedType.indexOf("*"));
+                        // compare allowed genaral type with actual general type
+                        if (allowedGeneralType === actualType.slice(0, allowedType.indexOf("*"))) {
+                            resolve();
+                        }
+                    } else {
+                        if (allowedType === actualType) {
+                            resolve();
+                        }
+                    }
+                } else {
+                    // add dot to extension if not already
+                    const allowedExtension = ((allowedType.match(/^[^.][^/]+$/)) ? "." : "") + allowedType;
+                    // if filename contains allowed extension
+                    if (this.name.slice(this.name.indexOf(".")) === allowedExtension) {
+                        resolve();
+                    }
+                    // subtype of mime ("image/png" -> "png")
+                    const actualSubtype = actualType.slice(actualType.indexOf("/") + 1);
+                    if ("." + actualSubtype === allowedExtension) {
+                        resolve();
+                    }
+                }
+            }
+            reject("Filetype is not allowed.");
         });
     }
 
