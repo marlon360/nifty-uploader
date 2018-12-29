@@ -16,3 +16,38 @@ An easy file uploader for the browser written in TypeScript.
 * add custom headers to request
 * add czstom request parameters
 * event system
+
+## API
+
+### NiftyUploader(options)
+
+#### options
+
+##### chunking
+
+Type: `boolean`  
+Default: `true`
+
+Enable or disable chunking. Uploads file in smaller pieces.
+
+##### chunksize
+
+Type: `number`  
+Default: `2 * 1024 * 1024` (2MB)
+
+The size of each chunk.
+
+##### endpoint
+
+Type: `string`  
+Default: `/`
+
+The server endpoint of the uploader. Sends request to this address.
+
+##### numberOfConcurrentUploads
+
+Type: `number`  
+Default: `3`
+
+Number of concurrent uploads.
+
