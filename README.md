@@ -14,7 +14,7 @@ An easy file uploader for the browser written in TypeScript.
 * validate filesize and filetype
 * add custom validation
 * add custom headers to request
-* add czstom request parameters
+* add custom request parameters
 * event system
 
 ## API
