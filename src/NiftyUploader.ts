@@ -84,7 +84,8 @@ export class NiftyUploader {
         const filesCount = this.files.length;
         for (let fileIndex = 0; fileIndex < filesCount; fileIndex++) {
             const file = this.files[fileIndex];
-            if (file.status === NiftyStatus.QUEUED || (file.status === NiftyStatus.UPLOADING && file.options.chunking)) {
+            if (file.status === NiftyStatus.QUEUED ||
+                (file.status === NiftyStatus.UPLOADING && file.options.chunking )) {
                 if (file.upload()) {
                     // exit function after first file for upload found
                     return;
@@ -136,7 +137,7 @@ export class NiftyUploader {
     public onFileFail(callback: (data: { file: NiftyFile }) => void) {
         this.fileFailEvent.on(callback);
     }
-    
+
     private activeConnectionCount(): number {
         let numberOfConnections = 0;
         for (const file of this.files) {
