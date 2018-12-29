@@ -102,6 +102,18 @@ export class NiftyUploader {
         }
     }
 
+    public getProgress() {
+        let totalProgress = 0;
+        let totalFiles = 0;
+        for (const file of this.files) {
+            if (file.status === NiftyStatus.UPLOADING || file.status === NiftyStatus.QUEUED) {
+                totalProgress += file.getProgress();
+                totalFiles++;
+            }
+        }
+        return totalProgress / totalFiles;
+    }
+
     // Events
     public onChunkSuccess(callback: (data: { chunk: NiftyChunk }) => void) {
         this.chunkSucsessEvent.on(callback);
