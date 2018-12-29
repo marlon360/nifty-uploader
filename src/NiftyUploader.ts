@@ -25,6 +25,8 @@ export class NiftyUploader {
     public fileQueuedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileAddedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileCanceledEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
+    public fileProgressEvent: NiftyEvent<{ file: NiftyFile, progress: number }> = new NiftyEvent();
+    public chunkProgressEvent: NiftyEvent<{ chunk: NiftyChunk, progress: number }> = new NiftyEvent();
     public fileUploadStartedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
 
     constructor(options?: INiftyOptionsParameter) {
@@ -136,6 +138,12 @@ export class NiftyUploader {
     }
     public onFileFail(callback: (data: { file: NiftyFile }) => void) {
         this.fileFailEvent.on(callback);
+    }
+    public onFileProgress(callback: (data: { file: NiftyFile, progress: number }) => void) {
+        this.fileProgressEvent.on(callback);
+    }
+    public onChunkProgress(callback: (data: { chunk: NiftyChunk, progress: number }) => void) {
+        this.chunkProgressEvent.on(callback);
     }
 
     private activeConnectionCount(): number {

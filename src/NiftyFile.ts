@@ -110,6 +110,18 @@ export class NiftyFile extends UploadElement {
         return false;
     }
 
+    public getProgress(): number {
+        if (this.options.chunking && this.chunks.length !== 0) {
+            let totalProgress = 0;
+            for (const chunk of this.chunks) {
+                totalProgress += chunk.getProgress();
+            }
+            return totalProgress / this.chunks.length;
+        } else {
+            return super.getProgress();
+        }
+    }
+
     // override method
     protected getRequestParameter(): { [key: string]: string | number } {
         const params = {
@@ -122,6 +134,10 @@ export class NiftyFile extends UploadElement {
 
     protected triggerRetryEvent() {
         this.uploader.fileRetryEvent.trigger({ file: this });
+    }
+
+    protected triggerProgressEvent(): void {
+        this.uploader.fileProgressEvent.trigger({ file: this, progress: this.getProgress() });
     }
 
     private generateUniqueIdentifier(): Promise<string> {

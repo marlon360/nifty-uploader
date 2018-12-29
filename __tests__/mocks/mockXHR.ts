@@ -3,6 +3,9 @@ export const createMockXHR = (status: number = 200, load = true, error: boolean 
         onload: jest.fn(),
         onerror: jest.fn(),
         ontimeout: jest.fn(),
+        upload: {
+            onprogress: jest.fn(),
+        },
         open: jest.fn(),
         send: jest.fn(function () {
             if (error) {
@@ -10,6 +13,9 @@ export const createMockXHR = (status: number = 200, load = true, error: boolean 
             } else if (timeout) {
                 this.ontimeout();
             } else if (load) {
+                this.upload.onprogress(progressEventWithLength);
+                this.upload.onprogress(progressEventWithoutLength);
+                this.upload.onprogress(progressEventWithoutLengthAndWithoutLoaded);
                 this.onload();
             }
         }),
@@ -18,4 +24,18 @@ export const createMockXHR = (status: number = 200, load = true, error: boolean 
         setRequestHeader: jest.fn()
     }
     return mockXHR;
+}
+
+const progressEventWithLength = {
+    lengthComputable: true,
+    loaded: 50,
+    total: 100
+}
+const progressEventWithoutLength = {
+    lengthComputable: false,
+    loaded: 50,
+    total: 100
+}
+const progressEventWithoutLengthAndWithoutLoaded = {
+    lengthComputable: false
 }

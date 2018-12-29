@@ -8,6 +8,8 @@ export abstract class UploadElement {
     public status: NiftyStatus;
     public uploader: NiftyUploader;
 
+    protected progress: number = 0;
+
     protected connection: XMLHttpRequest;
 
     private currentRetries = 0;
@@ -30,6 +32,16 @@ export abstract class UploadElement {
 
     public isComplete() {
         return this.status === NiftyStatus.ERROR || this.status === NiftyStatus.SUCCESS;
+    }
+
+    public getProgress(): number {
+        if (this.status === NiftyStatus.UPLOADING) {
+            return this.progress;
+        } else if (this.isComplete()) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     protected uploadData(data: Blob): Promise<string | Error> {
@@ -76,9 +88,18 @@ export abstract class UploadElement {
                 this.status = NiftyStatus.ERROR;
                 reject();
             };
+            const onRequestProgess = (ev: ProgressEvent) => {
+                if (ev.lengthComputable) {
+                    this.progress = ev.loaded / ev.total;
+                } else {
+                    this.progress = (ev.loaded || 0) / data.size;
+                }
+                this.triggerProgressEvent();
+            };
             this.connection.onload = onRequestComplete;
             this.connection.onerror = onRequestError;
             this.connection.ontimeout = onRequestError;
+            this.connection.upload.onprogress = onRequestProgess;
 
             // create form data to send
             const formData = new FormData();
@@ -113,5 +134,6 @@ export abstract class UploadElement {
     }
 
     protected abstract triggerRetryEvent(): void;
+    protected abstract triggerProgressEvent(): void;
 
 }
