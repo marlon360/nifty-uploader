@@ -1,6 +1,6 @@
 {
   "name": "nifty-uploader",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "An easy file uploader for the browser written in Javascript",
   "main": "lib/esm/entry.js",
   "types": "lib/types/entry.d.ts",
