@@ -36,8 +36,8 @@ export class NiftyUploader {
         this.checkSupport();
     }
 
-    public addFiles(files: File[], options?: INiftyOptionsParameter): void {
-        files.forEach((file: File) => {
+    public addFiles(files: File[] | FileList, options?: INiftyOptionsParameter): void {
+        for (const file of Array.from(files)) {
             const addedFile = new NiftyFile({ uploader: this, file, options });
             this.files.push(addedFile);
             addedFile.status = NiftyStatus.ADDED;
@@ -45,7 +45,7 @@ export class NiftyUploader {
             if (this.options.autoProcess) {
                 this.processFile(addedFile);
             }
-        });
+        }
     }
 
     public addFile(file: File, options?: INiftyOptionsParameter): void {
@@ -87,7 +87,7 @@ export class NiftyUploader {
         for (let fileIndex = 0; fileIndex < filesCount; fileIndex++) {
             const file = this.files[fileIndex];
             if (file.status === NiftyStatus.QUEUED ||
-                (file.status === NiftyStatus.UPLOADING && file.options.chunking )) {
+                (file.status === NiftyStatus.UPLOADING && file.options.chunking)) {
                 if (file.upload()) {
                     // exit function after first file for upload found
                     return;
