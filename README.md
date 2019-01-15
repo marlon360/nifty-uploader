@@ -31,6 +31,19 @@ chunking | `boolean` | `true` | Enable or disable chunking. Uploads file in smal
 chunksize | `number` | `2 * 1024 * 1024` | The size of each chunk.
 endpoint | `string` | `/` | The server endpoint of the uploader. Sends request to this address.
 numberOfConcurrentUploads | `number` | `3` | Number of concurrent uploads.
+generateUniqueIdentifier | `(file: NiftyFile) => string | Promise<string>` | | The function to generate the unique identifier, which returns a `string` with the identifier. It can also return a `Promise`.
+customRequestParameters | `{ [key: string]: string | number }` | `{}` | POST request parameter, which will be send with every request.
+customHeaders | `{ [key: string]: string | number }` | `{}` | Request headers, which will be send with every request.
+autoUpload | `boolean` | `true` | Determines if the queue of files should be uploaded automatically.
+autoQueue | `boolean` | `true` | Determines if a sucessfully processed file should be added automatically to the queue.
+autoProcess | `boolean` | `true` | Determines if an added file should be processed automatically.
+maxRetries | `number` | `3` | The number of retries before the file will be rejected.
+retryDelay | `number` | `100` | The delay between the attempts to retry an upload.
+permanentError | `number[]` | `[400, 404, 409, 415, 500, 501]` | An array of HTTP status codes, which rejects the file without retrying.
+minFileSize | `number` | `1` | The minimum size of a file.
+maxFileSize | `number` |  | The maximum size of a file.     
+allowedFileTypes | `string[]` | `[]` | 
+customValidation | `(file: NiftyFile) => boolean | Promise<boolean>` | | A custom function, which will be called in the processing step. If the function returns `false` the file will be rejected. The function can also return a `Promise`.
 
 ##### Example initialization with options
 
