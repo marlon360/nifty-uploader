@@ -21,33 +21,22 @@ An easy file uploader for the browser written in TypeScript.
 
 ### NiftyUploader(options)
 
-#### options
 
-##### chunking
 
-Type: `boolean`  
-Default: `true`
+#### Options
 
-Enable or disable chunking. Uploads file in smaller pieces.
+option | type | default | description
+--- | --- | --- | ---
+chunking | `boolean` | `true` | Enable or disable chunking. Uploads file in smaller pieces.
+chunksize | `number` | `2 * 1024 * 1024` | The size of each chunk.
+endpoint | `string` | `/` | The server endpoint of the uploader. Sends request to this address.
+numberOfConcurrentUploads | `number` | `3` | Number of concurrent uploads.
 
-##### chunksize
+##### Example Initialisation with Options
 
-Type: `number`  
-Default: `2 * 1024 * 1024` (2MB)
-
-The size of each chunk.
-
-##### endpoint
-
-Type: `string`  
-Default: `/`
-
-The server endpoint of the uploader. Sends request to this address.
-
-##### numberOfConcurrentUploads
-
-Type: `number`  
-Default: `3`
-
-Number of concurrent uploads.
-
+```js
+var uploader = new NiftyUploader({
+    endpoint: '/backend.php',
+    numberOfConcurrentUploads: 2
+})
+```
