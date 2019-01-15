@@ -32,7 +32,7 @@ chunksize | `number` | `2 * 1024 * 1024` | The size of each chunk.
 endpoint | `string` | `/` | The server endpoint of the uploader. Sends request to this address.
 numberOfConcurrentUploads | `number` | `3` | Number of concurrent uploads.
 
-##### Example Initialisation with Options
+##### Example initialization with options
 
 ```js
 var uploader = new NiftyUploader({
