@@ -172,7 +172,7 @@ export class NiftyFile extends UploadElement {
         // change status
         this.status = NiftyStatus.SUCCESS;
         // trigger event
-        this.uploader.fileSucsessEvent.trigger({ file: this });
+        this.uploader.fileSuccessEvent.trigger({ file: this });
     }
 
     private fileUploadFailed() {
@@ -184,7 +184,7 @@ export class NiftyFile extends UploadElement {
 
     private chunkUploadSucessful(chunk: NiftyChunk) {
         // trigger event
-        this.uploader.chunkSucsessEvent.trigger({ chunk });
+        this.uploader.chunkSuccessEvent.trigger({ chunk });
         // if all chunks uploaded, file success
         if (this.areAllChunksUploaded()) {
             this.fileUploadSucessful();

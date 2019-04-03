@@ -14,10 +14,10 @@ export class NiftyUploader {
     public isSupported: boolean = false;
 
     // Events
-    public chunkSucsessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
+    public chunkSuccessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
     public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk, error: string | Error }> = new NiftyEvent();
     public chunkRetryEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
-    public fileSucsessEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
+    public fileSuccessEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileFailEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileRetryEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
     public fileProcessingFailedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
@@ -116,7 +116,7 @@ export class NiftyUploader {
 
     // Events
     public onChunkSuccess(callback: (data: { chunk: NiftyChunk }) => void) {
-        this.chunkSucsessEvent.on(callback);
+        this.chunkSuccessEvent.on(callback);
     }
     public onChunkFail(callback: (data: { chunk: NiftyChunk, error: string | Error }) => void) {
         this.chunkFailEvent.on(callback);
@@ -146,7 +146,7 @@ export class NiftyUploader {
         this.fileUploadStartedEvent.on(callback);
     }
     public onFileSuccess(callback: (data: { file: NiftyFile }) => void) {
-        this.fileSucsessEvent.on(callback);
+        this.fileSuccessEvent.on(callback);
     }
     public onFileFail(callback: (data: { file: NiftyFile }) => void) {
         this.fileFailEvent.on(callback);
