@@ -36,58 +36,109 @@ export class NiftyUploader {
         this.checkSupport();
     }
 
+    /** 
+     * Add a File array or FileList to the uploader with optional options.
+     * 
+     * @param files An array of File objects or a FileList, which should be added to the uploader 
+     * @param options Options for the files
+     */
     public addFiles(files: File[] | FileList, options?: INiftyOptionsParameter): void {
         for (const file of Array.from(files)) {
+            // create NiftyFile Object of File and options
             const addedFile = new NiftyFile({ uploader: this, file, options });
+            // add NiftyFile to Array
             this.files.push(addedFile);
+            // change status to ADDED
             addedFile.status = NiftyStatus.ADDED;
+            // trigger fileAddedEvent
             this.fileAddedEvent.trigger({ file: addedFile });
+            // process file if autoProcess is enabled
             if (this.options.autoProcess) {
                 this.processFile(addedFile);
             }
         }
     }
 
+    /** 
+     * Add a File to the uploader with optional options.
+     * 
+     * @param file The File object, which should be added to the uploader
+     * @param options Options for the file
+     */
     public addFile(file: File, options?: INiftyOptionsParameter): void {
         this.addFiles([file], options);
     }
 
+    /** 
+     * Process a NiftyFile object.
+     * 
+     * @param file The file to process.
+     */
     public processFile(file: NiftyFile) {
+        // set status to processing
         file.status = NiftyStatus.PROCESSING;
+        // run the process method of the file
         file.processFile().then(() => {
+            // ste status to processed after successful processing
             file.status = NiftyStatus.PROCESSED;
+            // trigger fileProcessedEvent
             this.fileProcessedEvent.trigger({ file });
+            // enqueue file if autoQueue is enabled
             if (file.options.autoQueue) {
                 this.enqueueFile(file);
             }
         }).catch((error) => {
+            // set status to rejected if processing failed
             file.status = NiftyStatus.REJECTED;
+            // trigger fileProcessingFailedEvent
             this.fileProcessingFailedEvent.trigger({ file });
         });
     }
 
+    /** 
+     * Enqueue file in the uploader queue.
+     * 
+     * @param file The file to enqueue.
+     */
     public enqueueFile(file: NiftyFile) {
+        // set status to queued
         file.status = NiftyStatus.QUEUED;
+        // trigger fileQueuedEvent
         this.fileQueuedEvent.trigger({ file });
+        // start uploading if autoUpload is enabled
         if (this.options.autoUpload) {
             this.upload();
         }
     }
 
+    /** 
+     * Starts the uploading process, if a free connection is available.
+     */
     public upload() {
+        // get all active connections
         const activeConnections = this.activeConnectionCount();
+        // calculate the free connections
         const freeConnections = this.options.numberOfConcurrentUploads - activeConnections;
+        // use every free connection to upload an enqueued file
         for (let i = 0; i < freeConnections; i++) {
             this.uploadNextQueuedElement();
         }
     }
 
+    /** 
+     * Starts the upload for the next enqueued file.
+     */
     public uploadNextQueuedElement() {
         const filesCount = this.files.length;
+        // iterate through all files
         for (let fileIndex = 0; fileIndex < filesCount; fileIndex++) {
+            // get file
             const file = this.files[fileIndex];
+            // check if file is queued or is uploading with chunks
             if (file.status === NiftyStatus.QUEUED ||
                 (file.status === NiftyStatus.UPLOADING && file.options.chunking)) {
+                // start the upload of the file
+                // check if the file can be uploaded
                 if (file.upload()) {
                     // exit function after first file for upload found
                     return;
@@ -96,17 +147,27 @@ export class NiftyUploader {
         }
     }
 
+    /** 
+     * Cancels all files of the uploader.
+     */
     public cancelAll() {
         for (const file of this.files) {
             file.cancel();
         }
     }
 
-    public getProgress() {
+    /** 
+     * The percentage of the current upload progress.
+     * 
+     * @returns {number} Percentage of the upload progress between 0 and 1
+     */
+    public getProgress(): number {
         let totalProgress = 0;
         let totalFiles = 0;
         for (const file of this.files) {
+            // get all files, which are uploading or queued
             if (file.status === NiftyStatus.UPLOADING || file.status === NiftyStatus.QUEUED) {
+                // add progress of the file to the total progress
                 totalProgress += file.getProgress();
                 totalFiles++;
             }
@@ -158,6 +219,12 @@ export class NiftyUploader {
         this.chunkProgressEvent.on(callback);
     }
 
+    /** 
+     * The number of current active connections.
+     * All files or chunks, which are uploading and using and XHR connection.
+     * 
+     * @returns {number} Number of current active connections
+     */
     private activeConnectionCount(): number {
         let numberOfConnections = 0;
         for (const file of this.files) {
