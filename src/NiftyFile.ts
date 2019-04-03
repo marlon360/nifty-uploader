@@ -40,6 +40,11 @@ export class NiftyFile extends UploadElement {
 
     }
 
+    /**
+     * Processes this file.
+     *
+     * @returns {Promise} Returns a Promise for the processing
+     */
     public processFile(): Promise<any> {
         const tasks = new Array<any>();
 

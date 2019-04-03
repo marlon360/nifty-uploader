@@ -36,10 +36,10 @@ export class NiftyUploader {
         this.checkSupport();
     }
 
-    /** 
+    /**
      * Add a File array or FileList to the uploader with optional options.
-     * 
-     * @param files An array of File objects or a FileList, which should be added to the uploader 
+     *
+     * @param files An array of File objects or a FileList, which should be added to the uploader
      * @param options Options for the files
      */
     public addFiles(files: File[] | FileList, options?: INiftyOptionsParameter): void {
@@ -59,9 +59,9 @@ export class NiftyUploader {
         }
     }
 
-    /** 
+    /**
      * Add a File to the uploader with optional options.
-     * 
+     *
      * @param file The File object, which should be added to the uploader
      * @param options Options for the file
      */
@@ -69,9 +69,9 @@ export class NiftyUploader {
         this.addFiles([file], options);
     }
 
-    /** 
+    /**
      * Process a NiftyFile object.
-     * 
+     *
      * @param file The file to process.
      */
     public processFile(file: NiftyFile) {
@@ -95,9 +95,9 @@ export class NiftyUploader {
         });
     }
 
-    /** 
+    /**
      * Enqueue file in the uploader queue.
-     * 
+     *
      * @param file The file to enqueue.
      */
     public enqueueFile(file: NiftyFile) {
@@ -111,7 +111,7 @@ export class NiftyUploader {
         }
     }
 
-    /** 
+    /**
      * Starts the uploading process, if a free connection is available.
      */
     public upload() {
@@ -125,7 +125,7 @@ export class NiftyUploader {
         }
     }
 
-    /** 
+    /**
      * Starts the upload for the next enqueued file.
      */
     public uploadNextQueuedElement() {
@@ -147,7 +147,7 @@ export class NiftyUploader {
         }
     }
 
-    /** 
+    /**
      * Cancels all files of the uploader.
      */
     public cancelAll() {
@@ -156,9 +156,9 @@ export class NiftyUploader {
         }
     }
 
-    /** 
+    /**
      * The percentage of the current upload progress.
-     * 
+     *
      * @returns {number} Percentage of the upload progress between 0 and 1
      */
     public getProgress(): number {
@@ -219,10 +219,10 @@ export class NiftyUploader {
         this.chunkProgressEvent.on(callback);
     }
 
-    /** 
+    /**
      * The number of current active connections.
      * All files or chunks, which are uploading and using and XHR connection.
-     * 
+     *
      * @returns {number} Number of current active connections
      */
     private activeConnectionCount(): number {
