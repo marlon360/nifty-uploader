@@ -62,6 +62,30 @@ test('add single initial file to uploader without size', (done) => {
     uploader.addInitialFile({name: "test", uuid: "ABC-123"});
 });
 
+test('add mulötiple initial files to uploader', (done) => {
+    // new uploader instance
+    const uploader = new NiftyUploader({
+        autoUpload: false,
+        autoProcess: false
+    });
+    // file length should be 0, because no files were added
+    expect(uploader.files.length).toBe(0);
+
+    let counter = 0;
+    uploader.onFileAdded((data) => {
+        counter++;
+        if (counter == 2) {
+            // length should mow be 1
+            expect(uploader.files.length).toBe(2);
+            done();
+        }
+        
+    })
+
+    // add a test file
+    uploader.addInitialFiles([{name: "test", uuid: "ABC-123"}, {name: "test2", uuid: "ABC-1232"}]);
+});
+
 test('add multiple file to uploader', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({
