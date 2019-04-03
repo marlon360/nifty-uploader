@@ -19,6 +19,49 @@ test('add single file to uploader', (done) => {
     uploader.addFile(new File(["content"], "testfile"));
 });
 
+test('add single initial file to uploader with size', (done) => {
+    // new uploader instance
+    const uploader = new NiftyUploader({
+        autoUpload: false,
+        autoProcess: false
+    });
+    // file length should be 0, because no files were added
+    expect(uploader.files.length).toBe(0);
+
+    uploader.onFileAdded((data) => {
+        // length should mow be 1
+        expect(uploader.files.length).toBe(1);
+        expect(uploader.files[0].size).toBe(3);
+        expect(uploader.files[0].name).toBe("test");
+        expect(uploader.files[0].uniqueIdentifier).toBe("ABC-123");
+        done();
+    })
+
+    // add a test file
+    uploader.addInitialFile({name: "test", uuid: "ABC-123", size: 3});
+});
+test('add single initial file to uploader without size', (done) => {
+    // new uploader instance
+    const uploader = new NiftyUploader({
+        autoUpload: false,
+        autoProcess: false
+    });
+    // file length should be 0, because no files were added
+    expect(uploader.files.length).toBe(0);
+
+    uploader.onFileAdded((data) => {
+        // length should mow be 1
+        expect(uploader.files.length).toBe(1);
+        expect(uploader.files[0].size).toBe(0);
+        expect(uploader.files[0].name).toBe("test");
+        expect(uploader.files[0].uniqueIdentifier).toBe("ABC-123");
+        done();
+    })
+
+    // add a test file
+    uploader.addInitialFile({name: "test", uuid: "ABC-123"});
+});
+
 test('add multiple file to uploader', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({

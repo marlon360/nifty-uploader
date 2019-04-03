@@ -70,6 +70,31 @@ export class NiftyUploader {
     }
 
     /**
+     * Add initial File to the uploader, which is already uploaded to the server.
+     *
+     * @param file An object with the keys: name, uuid, size
+     * @param options Options for the file
+     */
+    public addInitialFile(file: {name: string, size?: number, uuid: string}, options?: INiftyOptionsParameter) {
+        // create new NiftyFile
+        const initialFile = new NiftyFile({
+            file: new File([], file.name),
+            options,
+            uploader: this,
+        });
+        // set status to success
+        initialFile.status = NiftyStatus.SUCCESS;
+        // add the unique identifier
+        initialFile.uniqueIdentifier = file.uuid;
+        // add size if available
+        initialFile.size = file.size ? file.size : 0;
+        // add file to array
+        this.files.push(initialFile);
+
+        this.fileAddedEvent.trigger({ file: initialFile });
+    }
+
+    /**
      * Process a NiftyFile object.
      *
      * @param file The file to process.
