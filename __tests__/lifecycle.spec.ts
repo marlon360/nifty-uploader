@@ -16,10 +16,10 @@ describe("test lifecycle auto options (add, process, enqueu, upload)", () => {
         });
     
         let correct = false;
-        uploader.onFileAdded((data) => {
+        uploader.on('file-added',(data) => {
             correct = true;
         });
-        uploader.onFileUploadStarted((data) => {
+        uploader.on('file-upload-started',(data) => {
             correct = false;
         });
     
@@ -43,7 +43,7 @@ describe("test lifecycle auto options (add, process, enqueu, upload)", () => {
             autoUpload: true
         });
     
-        uploader.onFileUploadStarted((data) => {
+        uploader.on('file-upload-started',(data) => {
             expect.anything();
             done();
         });
@@ -65,10 +65,10 @@ describe("test lifecycle auto options (add, process, enqueu, upload)", () => {
         });
     
         let correct = false;
-        uploader.onFileAdded((data) => {
+        uploader.on('file-added',(data) => {
             correct = true;
         });
-        uploader.onFileUploadStarted((data) => {
+        uploader.on('file-upload-started',(data) => {
             correct = false;
         });
     
@@ -93,10 +93,10 @@ describe("test lifecycle auto options (add, process, enqueu, upload)", () => {
         });
     
         let correct = false;
-        uploader.onFileAdded((data) => {
+        uploader.on('file-added',(data) => {
             correct = true;
         });
-        uploader.onFileUploadStarted((data) => {
+        uploader.on('file-upload-started',(data) => {
             correct = false;
         });
     

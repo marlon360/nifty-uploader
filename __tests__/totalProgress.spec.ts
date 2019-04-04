@@ -8,7 +8,7 @@ test('file progress event', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         expect(uploader.getProgress()).toBe(0);
         done();
     });

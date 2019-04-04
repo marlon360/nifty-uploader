@@ -10,7 +10,7 @@ test('chunk upload should retry and fail', (done) => {
     const uploader = new NiftyUploader();
     const file = new File(["content"], "filename");
 
-    uploader.onChunkFail((data) => {
+    uploader.on('chunk-failed',(data) => {
         expect(data.chunk.file.name).toBe(file.name);
         done();
     });
@@ -28,7 +28,7 @@ test('chunk upload should retry and trigger event', (done) => {
     const uploader = new NiftyUploader();
     const file = new File(["content"], "filename");
 
-    uploader.onChunkRetry((data) => {
+    uploader.on('chunk-retry',(data) => {
         expect(data.chunk.file.name).toBe(file.name);
         done();
     });
@@ -48,7 +48,7 @@ test('file upload should retry and trigger event', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileRetry((data) => {
+    uploader.on('file-retry',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

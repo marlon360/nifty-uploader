@@ -9,7 +9,7 @@ test('generate unique identifier default', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         const uniqueIdentifier = data.file.uniqueIdentifier;
         expect(uniqueIdentifier).toBe(file.size + "-" + file.name);
         done();
@@ -31,7 +31,7 @@ test('generate unique identifier with custom function', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         const uniqueIdentifier = data.file.uniqueIdentifier;
         expect(uniqueIdentifier).toBe(file.name);
         done();
@@ -58,7 +58,7 @@ test('generate unique identifier with custom function with promise', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         const uniqueIdentifier = data.file.uniqueIdentifier;
         expect(uniqueIdentifier).toBe("promise");
     });

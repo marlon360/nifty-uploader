@@ -12,7 +12,7 @@ test('file progress event', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileProgress((data) => {
+    uploader.on('file-progress',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -32,7 +32,7 @@ test('chunk progress event', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onChunkProgress((data) => {
+    uploader.on('chunk-progress',(data) => {
         expect(data.chunk.file.name).toBe(file.name);
         done();
     });

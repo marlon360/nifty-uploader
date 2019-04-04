@@ -1,7 +1,5 @@
-import { NiftyEvent } from "./NiftyEvent";
 import { NiftyFile } from "./NiftyFile";
 import { NiftyStatus } from "./NiftyStatus";
-import { NiftyUploader } from "./NiftyUploader";
 import { UploadElement } from "./UploadElement";
 
 export class NiftyChunk extends UploadElement {
@@ -66,12 +64,12 @@ export class NiftyChunk extends UploadElement {
     }
 
     protected triggerRetryEvent() {
-        this.uploader.chunkRetryEvent.trigger({ chunk: this });
+        this.uploader.emit("chunk-retry", { chunk: this });
     }
 
     protected triggerProgressEvent(): void {
-        this.uploader.chunkProgressEvent.trigger({ chunk: this, progress: this.getProgress() });
-        this.uploader.fileProgressEvent.trigger({ file: this.file, progress: this.file.getProgress() });
+        this.uploader.emit("chunk-progress", { chunk: this, progress: this.getProgress() });
+        this.uploader.emit("file-progress", { file: this.file, progress: this.file.getProgress() });
     }
 
     private sliceFile(): Blob {

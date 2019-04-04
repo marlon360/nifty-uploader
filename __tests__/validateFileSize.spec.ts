@@ -8,7 +8,7 @@ test('file is too big', (done) => {
 
     const file = new File(["biggerthan2bytes"], "filename");
 
-    uploader.onFileProcessingFailed((data) => {
+    uploader.on('processing-failed',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -24,7 +24,7 @@ test('file is not too big', (done) => {
 
     const file = new File(["biggerthan2bytes"], "filename");
 
-    uploader.onFileUploadStarted((data) => {
+    uploader.on('file-upload-started',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

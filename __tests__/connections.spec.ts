@@ -13,7 +13,7 @@ test('too many concurrent uploads', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileUploadStarted((data) => {
+    uploader.on('file-upload-started',(data) => {
         uploader.upload();
         uploader.upload();
         uploader.upload();

@@ -12,7 +12,7 @@ test('file upload start event should be fired', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileUploadStarted((data) => {
+    uploader.on('file-upload-started',(data) => {
         expect.anything();
         done();
     });

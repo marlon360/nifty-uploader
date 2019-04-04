@@ -9,7 +9,7 @@ test('add single file to uploader', (done) => {
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.onFileAdded((data) => {
+    uploader.on('file-added',(data) => {
         // length should mow be 1
         expect(uploader.files.length).toBe(1);
         done();
@@ -28,7 +28,7 @@ test('add single initial file to uploader with size', (done) => {
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.onFileAdded((data) => {
+    uploader.on('file-added',(data) => {
         // length should mow be 1
         expect(uploader.files.length).toBe(1);
         expect(uploader.files[0].size).toBe(3);
@@ -49,7 +49,7 @@ test('add single initial file to uploader without size', (done) => {
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.onFileAdded((data) => {
+    uploader.on('file-added',(data) => {
         // length should mow be 1
         expect(uploader.files.length).toBe(1);
         expect(uploader.files[0].size).toBe(0);
@@ -72,7 +72,7 @@ test('add mulötiple initial files to uploader', (done) => {
     expect(uploader.files.length).toBe(0);
 
     let counter = 0;
-    uploader.onFileAdded((data) => {
+    uploader.on('file-added', (data) => {
         counter++;
         if (counter == 2) {
             // length should mow be 1
@@ -96,7 +96,7 @@ test('add multiple file to uploader', (done) => {
     expect(uploader.files.length).toBe(0);
 
     let counter = 0;
-    uploader.onFileAdded((data) => {
+    uploader.on('file-added',(data) => {
         counter++;
         if (counter == 2) {
             // length should mow be 1
@@ -119,7 +119,7 @@ test('file added event', (done) => {
         autoProcess: false
     });
 
-    uploader.onFileAdded((data) => {
+    uploader.on('file-added',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

@@ -12,7 +12,7 @@ test('chunk upload should succeed', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onChunkSuccess((data) => {
+    uploader.on('chunk-success',(data) => {
         expect(data.chunk.file.name).toBe(file.name);
         done();
     });
@@ -30,7 +30,7 @@ test('chunk upload should fail', (done) => {
     const uploader = new NiftyUploader();
     const file = new File(["content"], "filename");
 
-    uploader.onChunkFail((data) => {
+    uploader.on('chunk-failed',(data) => {
         expect(data.chunk.file.name).toBe(file.name);
         done();
     });
@@ -48,7 +48,7 @@ test('chunk upload should fail because of xhr error', (done) => {
     const uploader = new NiftyUploader();
     const file = new File(["content"], "filename");
 
-    uploader.onChunkFail((data) => {
+    uploader.on('chunk-failed',(data) => {
         expect(data.chunk.file.name).toBe(file.name);
         done();
     });
@@ -67,7 +67,7 @@ test('chunk upload should fail because of xhr timeout', (done) => {
     const uploader = new NiftyUploader();
     const file = new File(["content"], "filename");
 
-    uploader.onChunkFail((data) => {
+    uploader.on('chunk-failed',(data) => {
         expect(data.chunk.file.name).toBe(file.name);
         done();
     });
@@ -87,7 +87,7 @@ test('file upload without chunking should succeed', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileSuccess((data) => {
+    uploader.on('file-success',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -107,7 +107,7 @@ test('file upload without chunking should fail', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileFail((data) => {
+    uploader.on('file-failed',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

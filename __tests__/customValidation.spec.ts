@@ -13,7 +13,7 @@ test('custom validation: promise resolved', (done) => {
 
     const file = new File(["content"], "filename.jpg");
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -34,7 +34,7 @@ test('custom validation: promise resolved with false', (done) => {
 
     const file = new File(["content"], "filename.jpg");
 
-    uploader.onFileProcessingFailed((data) => {
+    uploader.on('processing-failed',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -55,7 +55,7 @@ test('custom validation: promise rejected', (done) => {
 
     const file = new File(["content"], "filename.jpg");
 
-    uploader.onFileProcessingFailed((data) => {
+    uploader.on('processing-failed',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -74,7 +74,7 @@ test('custom validation: boolean', (done) => {
 
     const file = new File(["content"], "filename.jpg");
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -90,7 +90,7 @@ test('custom validation: no validation', (done) => {
 
     const file = new File(["content"], "filename.jpg");
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

@@ -1,5 +1,5 @@
+import { EventEmitter } from "./EventEmitter";
 import { NiftyChunk } from "./NiftyChunk";
-import { NiftyEvent } from "./NiftyEvent";
 import { NiftyFile } from "./NiftyFile";
 import { INiftyOptions, INiftyOptionsParameter, NiftyDefaultOptions } from "./NiftyOptions";
 import { NiftyStatus } from "./NiftyStatus";
@@ -13,23 +13,10 @@ export class NiftyUploader {
     // whether the browser support html5 file system api.
     public isSupported: boolean = false;
 
-    // Events
-    public chunkSuccessEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
-    public chunkFailEvent: NiftyEvent<{ chunk: NiftyChunk, error: string | Error }> = new NiftyEvent();
-    public chunkRetryEvent: NiftyEvent<{ chunk: NiftyChunk }> = new NiftyEvent();
-    public fileSuccessEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
-    public fileFailEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
-    public fileRetryEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
-    public fileProcessingFailedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
-    public fileProcessedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
-    public fileQueuedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
-    public fileAddedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
-    public fileCanceledEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
-    public fileProgressEvent: NiftyEvent<{ file: NiftyFile, progress: number }> = new NiftyEvent();
-    public chunkProgressEvent: NiftyEvent<{ chunk: NiftyChunk, progress: number }> = new NiftyEvent();
-    public fileUploadStartedEvent: NiftyEvent<{ file: NiftyFile }> = new NiftyEvent();
+    public ee: EventEmitter;
 
     constructor(options?: INiftyOptionsParameter) {
+        this.ee = new EventEmitter();
         // merge provided options with current options
         this.options = { ...this.options, ...options };
         this.setupEventHandler();
@@ -51,7 +38,7 @@ export class NiftyUploader {
             // change status to ADDED
             addedFile.status = NiftyStatus.ADDED;
             // trigger fileAddedEvent
-            this.fileAddedEvent.trigger({ file: addedFile });
+            this.emit("file-added", { file: addedFile });
             // process file if autoProcess is enabled
             if (this.options.autoProcess) {
                 this.processFile(addedFile);
@@ -92,7 +79,7 @@ export class NiftyUploader {
             // add file to array
             this.files.push(initialFile);
 
-            this.fileAddedEvent.trigger({ file: initialFile });
+            this.emit("file-added", { file: initialFile });
         }
     }
 
@@ -119,7 +106,7 @@ export class NiftyUploader {
             // ste status to processed after successful processing
             file.status = NiftyStatus.PROCESSED;
             // trigger fileProcessedEvent
-            this.fileProcessedEvent.trigger({ file });
+            this.emit("processing-success", { file });
             // enqueue file if autoQueue is enabled
             if (file.options.autoQueue) {
                 this.enqueueFile(file);
@@ -128,7 +115,7 @@ export class NiftyUploader {
             // set status to rejected if processing failed
             file.status = NiftyStatus.REJECTED;
             // trigger fileProcessingFailedEvent
-            this.fileProcessingFailedEvent.trigger({ file });
+            this.emit("processing-failed", { file });
         });
     }
 
@@ -141,7 +128,7 @@ export class NiftyUploader {
         // set status to queued
         file.status = NiftyStatus.QUEUED;
         // trigger fileQueuedEvent
-        this.fileQueuedEvent.trigger({ file });
+        this.emit("file-queued", { file });
         // start uploading if autoUpload is enabled
         if (this.options.autoUpload) {
             this.upload();
@@ -213,47 +200,30 @@ export class NiftyUploader {
     }
 
     // Events
-    public onChunkSuccess(callback: (data: { chunk: NiftyChunk }) => void) {
-        this.chunkSuccessEvent.on(callback);
+    public on(eventName: "file-added", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "processing-failed", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "processing-success", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-queued", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-canceled", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-retry", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-upload-started", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-success", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-failed", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-progress", fn: (data: { file: NiftyFile, progress: number }) => void): void;
+    public on(eventName: "chunk-success", fn: (data: {chunk: NiftyChunk}) => void): void;
+    public on(eventName: "chunk-failed", fn: (data: { chunk: NiftyChunk, error: string | Error }) => void): void;
+    public on(eventName: "chunk-retry", fn: (data: { chunk: NiftyChunk }) => void): void;
+    public on(eventName: "chunk-progress", fn: (data: { chunk: NiftyChunk, progress: number }) => void): void;
+    public on(eventName: string, fn: (...args: any) => void): void {
+        this.ee.on(eventName, fn);
     }
-    public onChunkFail(callback: (data: { chunk: NiftyChunk, error: string | Error }) => void) {
-        this.chunkFailEvent.on(callback);
+
+    public off(eventName: string, fn: () => void) {
+        this.ee.off(eventName, fn);
     }
-    public onChunkRetry(callback: (data: { chunk: NiftyChunk }) => void) {
-        this.chunkRetryEvent.on(callback);
-    }
-    public onFileProcessingFailed(callback: (data: { file: NiftyFile }) => void) {
-        this.fileProcessingFailedEvent.on(callback);
-    }
-    public onFileProcessed(callback: (data: { file: NiftyFile }) => void) {
-        this.fileProcessedEvent.on(callback);
-    }
-    public onFileQueued(callback: (data: { file: NiftyFile }) => void) {
-        this.fileQueuedEvent.on(callback);
-    }
-    public onFileAdded(callback: (data: { file: NiftyFile }) => void) {
-        this.fileAddedEvent.on(callback);
-    }
-    public onFileCanceled(callback: (data: { file: NiftyFile }) => void) {
-        this.fileCanceledEvent.on(callback);
-    }
-    public onFileRetry(callback: (data: { file: NiftyFile }) => void) {
-        this.fileRetryEvent.on(callback);
-    }
-    public onFileUploadStarted(callback: (data: { file: NiftyFile }) => void) {
-        this.fileUploadStartedEvent.on(callback);
-    }
-    public onFileSuccess(callback: (data: { file: NiftyFile }) => void) {
-        this.fileSuccessEvent.on(callback);
-    }
-    public onFileFail(callback: (data: { file: NiftyFile }) => void) {
-        this.fileFailEvent.on(callback);
-    }
-    public onFileProgress(callback: (data: { file: NiftyFile, progress: number }) => void) {
-        this.fileProgressEvent.on(callback);
-    }
-    public onChunkProgress(callback: (data: { chunk: NiftyChunk, progress: number }) => void) {
-        this.chunkProgressEvent.on(callback);
+
+    public emit(eventName: string, data?: any) {
+        this.ee.emit(eventName, data);
     }
 
     /**
@@ -297,10 +267,10 @@ export class NiftyUploader {
     }
 
     private setupEventHandler() {
-        this.onChunkSuccess((data: { chunk: NiftyChunk }) => {
+        this.on("chunk-success", (data: { chunk: NiftyChunk }) => {
             this.upload();
         });
-        this.onFileSuccess((data: { file: NiftyFile }) => {
+        this.on("file-success", (data: { file: NiftyFile }) => {
             this.upload();
         });
     }

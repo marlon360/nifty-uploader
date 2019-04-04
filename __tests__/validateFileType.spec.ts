@@ -11,7 +11,7 @@ test('file type allowed: extension with dot', (done) => {
 
     const file = new File(["content"], "filename.jpg");
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -28,7 +28,7 @@ test('file type allowed: empty array', (done) => {
 
     const file = new File(["content"], "filename.jpg");
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -45,7 +45,7 @@ test('file type allowed: empty array', (done) => {
 
     const file = new File(["content"], "filename.jpg");
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -64,7 +64,7 @@ test('file type allowed: mime type', (done) => {
 
     const file = new File(["content"], "filename.png", {type: "image/png"});
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -83,7 +83,7 @@ test('file type not allowed: mime type', (done) => {
 
     const file = new File(["content"], "filename.mp4", {type: "video/mp4"});
 
-    uploader.onFileProcessingFailed((data) => {
+    uploader.on('processing-failed',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -102,7 +102,7 @@ test('file type allowed: mime wildcard', (done) => {
 
     const file = new File(["content"], "filename.png", {type: "image/png"});
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -121,7 +121,7 @@ test('file type not allowed: mime wildcard', (done) => {
 
     const file = new File(["content"], "filename.mp4", {type: "video/mp4"});
 
-    uploader.onFileProcessingFailed((data) => {
+    uploader.on('processing-failed',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -140,7 +140,7 @@ test('file type allowed: mime subtype without extension', (done) => {
 
     const file = new File(["content"], "filename", {type: "image/png"});
 
-    uploader.onFileQueued((data) => {
+    uploader.on('file-queued',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

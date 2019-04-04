@@ -96,7 +96,7 @@ export class NiftyFile extends UploadElement {
                     if (this.status !== NiftyStatus.UPLOADING) {
                         this.status = NiftyStatus.UPLOADING;
                         // trigger fileUploadStartedEvent
-                        this.uploader.fileUploadStartedEvent.trigger({ file: this });
+                        this.uploader.emit("file-upload-started", { file: this });
                     }
                     // an upload started, so return true
                     return true;
@@ -113,7 +113,7 @@ export class NiftyFile extends UploadElement {
                     this.fileUploadFailed();
                 });
             this.status = NiftyStatus.UPLOADING;
-            this.uploader.fileUploadStartedEvent.trigger({ file: this });
+            this.uploader.emit("file-upload-started", { file: this });
             // an upload started, so return true
             return true;
         }
@@ -134,7 +134,7 @@ export class NiftyFile extends UploadElement {
         // try to cancel file
         if (super.cancel()) {
             // if successfully canceled file, trigger event
-            this.uploader.fileCanceledEvent.trigger({ file: this });
+            this.uploader.emit("file-canceled", { file: this });
             return true;
         }
         return false;
@@ -163,11 +163,11 @@ export class NiftyFile extends UploadElement {
     }
 
     protected triggerRetryEvent() {
-        this.uploader.fileRetryEvent.trigger({ file: this });
+        this.uploader.emit("file-retry", { file: this });
     }
 
     protected triggerProgressEvent(): void {
-        this.uploader.fileProgressEvent.trigger({ file: this, progress: this.getProgress() });
+        this.uploader.emit("file-progress", { file: this, progress: this.getProgress() });
     }
 
     private generateUniqueIdentifier(): Promise<string> {
@@ -202,19 +202,19 @@ export class NiftyFile extends UploadElement {
         // change status
         this.status = NiftyStatus.SUCCESS;
         // trigger event
-        this.uploader.fileSuccessEvent.trigger({ file: this });
+        this.uploader.emit("file-success", { file: this });
     }
 
     private fileUploadFailed() {
         // change status
         this.status = NiftyStatus.ERROR;
         // trigger event
-        this.uploader.fileFailEvent.trigger({ file: this });
+        this.uploader.emit("file-failed", { file: this });
     }
 
     private chunkUploadSuccessful(chunk: NiftyChunk) {
         // trigger event
-        this.uploader.chunkSuccessEvent.trigger({ chunk });
+        this.uploader.emit("chunk-success", { chunk });
         // if all chunks uploaded, file success
         if (this.areAllChunksUploaded()) {
             this.fileUploadSuccessful();
@@ -222,7 +222,7 @@ export class NiftyFile extends UploadElement {
     }
     private chunkUploadFailed(chunk: NiftyChunk, error: string | Error) {
         // trigger event
-        this.uploader.chunkFailEvent.trigger({ chunk, error });
+        this.uploader.emit("chunk-failed", { chunk, error });
         // if one chunk fails, file fails
         this.fileUploadFailed();
     }

@@ -13,12 +13,12 @@ test('cancel upload', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileCanceled((data) => {
+    uploader.on('file-canceled',(data) => {
         expect(data.file.status).toBe(NiftyStatus.CANCELED);
         done();
     })
 
-    uploader.onFileUploadStarted((data) => {
+    uploader.on('file-upload-started',(data) => {
         data.file.cancel();
     });
 
@@ -38,12 +38,12 @@ test('cancel upload with active connection', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileCanceled((data) => {
+    uploader.on('file-canceled',(data) => {
         expect(data.file.status).toBe(NiftyStatus.CANCELED);
         done();
     })
 
-    uploader.onFileUploadStarted((data) => {
+    uploader.on('file-upload-started',(data) => {
         data.file.cancel();
     });
 
@@ -62,7 +62,7 @@ test('cancel completed upload', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileSuccess((data) => {
+    uploader.on('file-success',(data) => {
         data.file.cancel();
         expect(data.file.status).toBe(NiftyStatus.SUCCESS);
         done();
@@ -83,7 +83,7 @@ test('cancel completed chunk', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onChunkSuccess((data) => {
+    uploader.on('chunk-success',(data) => {
         data.chunk.cancel();
         expect(data.chunk.status).toBe(NiftyStatus.SUCCESS);
         done();
@@ -104,12 +104,12 @@ test('cancel all uploads', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.onFileCanceled((data) => {
+    uploader.on('file-canceled',(data) => {
         expect(data.file.status).toBe(NiftyStatus.CANCELED);
         done();
     })
 
-    uploader.onFileAdded((data) => {
+    uploader.on('file-added',(data) => {
         uploader.cancelAll();
     });
 
