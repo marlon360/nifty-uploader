@@ -77,7 +77,8 @@ test('file type not allowed: mime type', (done) => {
     const uploader = new NiftyUploader({
         autoUpload: false,
         allowedFileTypes: [
-            "image/png"
+            "image/png",
+            "image/jpg"
         ]
     });
 

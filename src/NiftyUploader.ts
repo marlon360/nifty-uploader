@@ -117,7 +117,7 @@ export class NiftyUploader {
             // remove from list
             file.remove();
             // trigger fileProcessingFailedEvent
-            this.emit("processing-failed", { file });
+            this.emit("processing-failed", { file, error });
         });
     }
 
@@ -219,7 +219,7 @@ export class NiftyUploader {
 
     // Events
     public on(eventName: "file-added", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "processing-failed", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "processing-failed", fn: (data: { file: NiftyFile, error: string }) => void): void;
     public on(eventName: "processing-success", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-queued", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-canceled", fn: (data: { file: NiftyFile }) => void): void;

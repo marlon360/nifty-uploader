@@ -19,7 +19,7 @@ export class Validator {
             if (size + totalFileSize <= totalFileSizeLimit) {
                 resolve();
             } else {
-                reject("The total file size limit reached. You cannot add this file.");
+                reject("The total file size limit of "+(totalFileSizeLimit / 1e+6).toFixed(2)+"MB reached. You cannot add this file.");
             }
         });
     }
@@ -65,7 +65,14 @@ export class Validator {
                     }
                 }
             }
-            reject("Filetype is not allowed.");
+            let errorMsg = "Filetype is not allowed. Allowed file types: ";
+            for (let i = 0; i < allowedFileTypes.length; i++) {
+                errorMsg += allowedFileTypes[i];
+                if(i < allowedFileTypes.length - 1) {
+                    errorMsg += ", ";
+                }
+            }
+            reject(errorMsg);
         });
     }
 }
