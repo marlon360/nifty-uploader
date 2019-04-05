@@ -51,6 +51,11 @@ export class NiftyFile extends UploadElement {
 
         // add task for file size validation
         tasks.push(Validator.validateFileSize(this.content, this.options.minFileSize, this.options.maxFileSize));
+        // if total file size limit enabled
+        if (this.options.totalFileSizeLimit) {
+            // add task for total file size validation
+            tasks.push(Validator.validateTotalFileSize(this.size, this.uploader.getTotalFileSize(), this.options.totalFileSizeLimit));
+        }
         // add task for file type validation
         tasks.push(Validator.validateFileType(this.content, this.name, this.options.allowedFileTypes));
         // add task for custom validation

@@ -13,7 +13,7 @@ export class NiftyUploader {
     // whether the browser support html5 file system api.
     public isSupported: boolean = false;
 
-    public ee: EventEmitter;
+    private ee: EventEmitter;
 
     constructor(options?: INiftyOptionsParameter) {
         this.ee = new EventEmitter();
@@ -199,6 +199,20 @@ export class NiftyUploader {
             }
         }
         return totalProgress / totalFiles;
+    }
+
+    public getTotalFileSize(): number {
+        let totalFileSize = 0;
+        for (const file of this.files) {
+            if (file.status === NiftyStatus.UPLOADING ||
+                file.status === NiftyStatus.QUEUED ||
+                file.status === NiftyStatus.SUCCESS ||
+                file.status === NiftyStatus.PENDING_RETRY ||
+                file.status === NiftyStatus.PROCESSED) {
+                totalFileSize += file.size;
+            }
+        }
+        return totalFileSize;
     }
 
     // Events
