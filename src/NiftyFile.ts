@@ -124,9 +124,10 @@ export class NiftyFile extends UploadElement {
     /**
      * Cancels the upload of this file.
      *
+     * @param {boolean} remove If enabled, the file will be removed from the list of the uploader
      * @returns {boolean} A boolean, which indicates wether canceling was successful
      */
-    public cancel(): boolean {
+    public cancel(remove: boolean = true): boolean {
         // cancel all chunks that are not completed
         for (const chunk of this.chunks) {
             chunk.cancel();
@@ -135,9 +136,21 @@ export class NiftyFile extends UploadElement {
         if (super.cancel()) {
             // if successfully canceled file, trigger event
             this.uploader.emit("file-canceled", { file: this });
+            // remove from list if enabled
+            if (remove) {
+                this.remove();
+            }
             return true;
         }
         return false;
+    }
+
+    public remove(): void {
+        const index = this.uploader.files.indexOf(this);
+        // check if this file exists in list
+        if (index > -1) {
+            this.uploader.files.splice(index);
+        }
     }
 
     public getProgress(): number {

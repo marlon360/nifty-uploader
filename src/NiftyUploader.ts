@@ -173,10 +173,12 @@ export class NiftyUploader {
 
     /**
      * Cancels all files of the uploader.
+     *
+     * @param {boolean} remove If enabled, all files will be removed from the list of the uploader
      */
-    public cancelAll() {
+    public cancelAll(remove: boolean = true) {
         for (const file of this.files) {
-            file.cancel();
+            file.cancel(remove);
         }
     }
 
