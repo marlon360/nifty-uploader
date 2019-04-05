@@ -114,6 +114,8 @@ export class NiftyUploader {
         }).catch((error) => {
             // set status to rejected if processing failed
             file.status = NiftyStatus.REJECTED;
+            // remove from list
+            file.remove();
             // trigger fileProcessingFailedEvent
             this.emit("processing-failed", { file });
         });
