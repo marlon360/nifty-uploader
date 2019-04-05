@@ -12,6 +12,7 @@ An easy file uploader for the browser written in TypeScript.
 * retry uploads
 * get progress of file/chunk or total progress
 * validate filesize and filetype
+* limit the total file size of all files
 * add custom validation
 * add custom headers to request
 * add custom request parameters
@@ -42,6 +43,7 @@ retryDelay | `number` | `100` | The delay between the attempts to retry an uploa
 permanentError | `number[]` | `[400, 404, 409, 415, 500, 501]` | An array of HTTP status codes, which rejects the file without retrying.
 minFileSize | `number` | `1` | The minimum size of a file.
 maxFileSize | `number` | `undefined`  | The maximum size of a file.     
+totalFileSizeLimit | `number` | `undefined`  | The maximum size of all file sizes in the uploader combined.
 allowedFileTypes | `string[]` | `[]` | The allowed file types. You can use `.ext`, `ext`, `mime/type` or `mime/*`. An empty array (default) allows all file types.
 customValidation | `(file: NiftyFile) => boolean \| Promise<boolean>` | `undefined` | A custom function, which will be called in the processing step. If the function returns `false` the file will be rejected. The function can also return a `Promise`.
 
