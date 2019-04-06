@@ -50,14 +50,30 @@ export class NiftyFile extends UploadElement {
         const tasks = new Array<any>();
 
         // add task for file size validation
-        tasks.push(Validator.validateFileSize(this.content, this.options.minFileSize, this.options.maxFileSize));
+        tasks.push(Validator.validateFileSize(
+            this.content.size,
+            this.options.minFileSize,
+            this.options.fileTooSmallError,
+            this.options.maxFileSize,
+            this.options.fileTooBigError
+        ));
         // if total file size limit enabled
         if (this.options.totalFileSizeLimit) {
             // add task for total file size validation
-            tasks.push(Validator.validateTotalFileSize(this.size, this.uploader.getTotalFileSize(), this.options.totalFileSizeLimit));
+            tasks.push(Validator.validateTotalFileSize(
+                this.size,
+                this.uploader.getTotalFileSize(),
+                this.options.totalFileSizeLimit,
+                this.options.totalFileSizeLimitError
+            ));
         }
         // add task for file type validation
-        tasks.push(Validator.validateFileType(this.content, this.name, this.options.allowedFileTypes));
+        tasks.push(Validator.validateFileType(
+            this.content,
+            this.name,
+            this.options.allowedFileTypes,
+            this.options.fileTypeError
+        ));
         // add task for custom validation
         tasks.push(this.customValidation());
 

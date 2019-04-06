@@ -4,7 +4,7 @@ export interface INiftyOptionsParameter {
     chunking?: boolean;
     chunkSize?: number;
     numberOfConcurrentUploads?: number;
-    generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
+    generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
     endpoint?: string;
     customRequestParameters?: { [key: string]: string | number };
     customHeaders?: { [key: string]: string | number };
@@ -19,13 +19,19 @@ export interface INiftyOptionsParameter {
     totalFileSizeLimit?: number;
     allowedFileTypes?: string[]; // accepts: .extension, extension, mime/type, mime/*
     customValidation?: ((file: NiftyFile) => boolean | Promise<boolean>);
+
+    fileTooSmallError?: ((size: number, min: number) => string);
+    fileTooBigError?: ((size: number, max: number) => string);
+    fileTypeError?: ((type: string, allowedFileTypes: string[]) => string);
+    totalFileSizeLimitError?: ((size: number, totalFileSizeLimit: number, totalFileSize: number) => string);
+
 }
 
 export interface INiftyOptions extends INiftyOptionsParameter {
     chunking: boolean;
     chunkSize: number;
     numberOfConcurrentUploads: number;
-    generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
+    generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
     endpoint: string;
     customRequestParameters: { [key: string]: string | number };
     customHeaders: { [key: string]: string | number };
@@ -40,6 +46,12 @@ export interface INiftyOptions extends INiftyOptionsParameter {
     totalFileSizeLimit?: number;
     allowedFileTypes: string[];
     customValidation?: ((file: NiftyFile) => boolean | Promise<boolean>);
+
+    fileTooSmallError: ((size: number, min: number) => string);
+    fileTooBigError: ((size: number, max: number) => string);
+    fileTypeError: ((type: string, allowedFileTypes: string[]) => string);
+    totalFileSizeLimitError: ((size: number, totalFileSizeLimit: number, totalFileSize: number) => string);
+
 }
 
 export class NiftyDefaultOptions implements INiftyOptionsParameter {
@@ -60,7 +72,7 @@ export class NiftyDefaultOptions implements INiftyOptionsParameter {
     // enable auto queue
     public autoQueue = true;
     // enable auto process
-    public  autoProcess = true;
+    public autoProcess = true;
     // retry 3 times
     public maxRetries = 3;
     // delay retry by 100ms
@@ -71,4 +83,24 @@ export class NiftyDefaultOptions implements INiftyOptionsParameter {
     public minFileSize = 1;
     // allow every type
     public allowedFileTypes = [];
+
+    public fileTooSmallError = ((size: number, min: number) => {
+        return "File is too small. File has to be at least " + min + " Bytes.";
+    });
+    public fileTooBigError = ((size: number, max: number) => {
+        return "File is too big. Maximum file size is " + max + " Bytes";
+    });
+    public fileTypeError = ((type: string, allowedFileTypes: string[]) => {
+        let errorMsg = "Filetype is not allowed. Allowed file types: ";
+        for (let i = 0; i < allowedFileTypes.length; i++) {
+                errorMsg += allowedFileTypes[i];
+                if (i < allowedFileTypes.length - 1) {
+                    errorMsg += ", ";
+                }
+            }
+        return errorMsg;
+    });
+    public totalFileSizeLimitError = ((size: number, totalFileSizeLimit: number, totalFileSize: number) => {
+        return "The total file size limit of " + (totalFileSizeLimit / 1e+6).toFixed(2) + "MB reached. You cannot add this file.";
+    });
 }

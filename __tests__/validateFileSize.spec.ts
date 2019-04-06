@@ -8,8 +8,27 @@ test('file is too big', (done) => {
 
     const file = new File(["biggerthan2bytes"], "filename");
 
-    uploader.on('processing-failed',(data) => {
+    uploader.on('processing-failed', (data) => {
         expect(data.file.name).toBe(file.name);
+        done();
+    });
+
+    uploader.addFile(file);
+});
+
+test('custom error message', (done) => {
+    // new uploader instance without options
+    const uploader = new NiftyUploader({
+        maxFileSize: 2,
+        fileTooBigError: (size, max) => {
+            return "Max: " + max;
+        }
+    });
+
+    const file = new File(["biggerthan2bytes"], "filename");
+
+    uploader.on('processing-failed', (data) => {
+        expect(data.error).toBe("Max: "+2);
         done();
     });
 
@@ -24,7 +43,7 @@ test('file is not too big', (done) => {
 
     const file = new File(["biggerthan2bytes"], "filename");
 
-    uploader.on('file-upload-started',(data) => {
+    uploader.on('file-upload-started', (data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

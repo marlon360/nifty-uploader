@@ -1,30 +1,30 @@
 export class Validator {
 
-    public static validateFileSize(file: File | Blob, min: number, max?: number): Promise<string> {
+    public static validateFileSize(size: number, min: number, fileTooSmallError: (size: number, min: number) => string, max?: number, fileTooBigError?: (size: number, max: number) => string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            if (file.size < min) {
-                reject("File is too small. File has to be at least " + min + " Bytes.");
+            if (size < min) {
+                reject(fileTooSmallError(size, min));
             }
-            if (max) {
-                if (file.size > max) {
-                    reject("File is too big. Maximum file size is " + max + " Bytes");
+            if (max && fileTooBigError) {
+                if (size > max) {
+                    reject(fileTooBigError(size, max));
                 }
             }
             resolve();
         });
     }
 
-    public static validateTotalFileSize(size: number, totalFileSize: number, totalFileSizeLimit: number): Promise<string> {
+    public static validateTotalFileSize(size: number, totalFileSize: number, totalFileSizeLimit: number, totalFileSizeLimitError: ((size: number, totalFileSizeLimit: number, totalFileSize: number) => string)): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             if (size + totalFileSize <= totalFileSizeLimit) {
                 resolve();
             } else {
-                reject("The total file size limit of " + (totalFileSizeLimit / 1e+6).toFixed(2) + "MB reached. You cannot add this file.");
+                reject(totalFileSizeLimitError(size, totalFileSizeLimit, totalFileSize));
             }
         });
     }
 
-    public static validateFileType(file: Blob | File, filename: string, allowedFileTypes: string[]): Promise<string> {
+    public static validateFileType(file: Blob | File, filename: string, allowedFileTypes: string[], fileTypeError: ((type: string, allowedFileTypes: string[]) => string)): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             // If no extensions specified, allow every file
             if (allowedFileTypes.length === 0) {
@@ -65,14 +65,7 @@ export class Validator {
                     }
                 }
             }
-            let errorMsg = "Filetype is not allowed. Allowed file types: ";
-            for (let i = 0; i < allowedFileTypes.length; i++) {
-                errorMsg += allowedFileTypes[i];
-                if (i < allowedFileTypes.length - 1) {
-                    errorMsg += ", ";
-                }
-            }
-            reject(errorMsg);
+            reject(fileTypeError(actualType, allowedFileTypes));
         });
     }
 }
