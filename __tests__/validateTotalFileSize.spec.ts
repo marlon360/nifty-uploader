@@ -15,7 +15,7 @@ test('file size limit reached', (done) => {
 
     uploader.addInitialFile({
         name: "test",
-        uuid: "asdas",
+        uniqueIdentifier: "asdas",
         size: 1
     });
 
