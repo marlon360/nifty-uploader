@@ -219,7 +219,7 @@ export class NiftyUploader {
 
     public getFileByUniqueIdentifier(uniqueIdentifier: string): NiftyFile | undefined {
         for (const file of this.files) {
-            if(file.uniqueIdentifier === uniqueIdentifier) {
+            if (file.uniqueIdentifier === uniqueIdentifier) {
                 return file;
             }
         }
@@ -227,9 +227,9 @@ export class NiftyUploader {
     }
 
     public getFilesByStatus(status: NiftyStatus[]): NiftyFile[] {
-        let files: NiftyFile[] = new Array<NiftyFile>();
+        const files: NiftyFile[] = new Array<NiftyFile>();
         for (const file of this.files) {
-            if(status.indexOf(file.status) > -1) {
+            if (status.indexOf(file.status) > -1) {
                 files.push(file);
             }
         }
