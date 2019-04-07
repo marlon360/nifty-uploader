@@ -36,7 +36,7 @@ generateUniqueIdentifier | `(file: NiftyFile) => string \| Promise<string>` | `
 customRequestParameters | `{ [key: string]: string \| number }` | `{}` | POST request parameter, which will be send with every request.
 customHeaders | `{ [key: string]: string \| number }` | `{}` | Request headers, which will be send with every request.
 autoUpload | `boolean` | `true` | Determines if the queue of files should be uploaded automatically.
-autoQueue | `boolean` | `true` | Determines if a sucessfully processed file should be added automatically to the queue.
+autoQueue | `boolean` | `true` | Determines if a successfully processed file should be added automatically to the queue.
 autoProcess | `boolean` | `true` | Determines if an added file should be processed automatically.
 maxRetries | `number` | `3` | The number of retries before the file will be rejected.
 retryDelay | `number` | `100` | The delay between the attempts to retry an upload.
@@ -45,7 +45,7 @@ minFileSize | `number` | `1` | The minimum size of a file.
 maxFileSize | `number` | `undefined`  | The maximum size of a file.     
 totalFileSizeLimit | `number` | `undefined`  | The maximum size of all file sizes in the uploader combined.
 allowedFileTypes | `string[]` | `[]` | The allowed file types. You can use `.ext`, `ext`, `mime/type` or `mime/*`. An empty array (default) allows all file types.
-customValidation | `(file: NiftyFile) => boolean \| Promise<boolean>` | `undefined` | A custom function, which will be called in the processing step. If the function returns `false` the file will be rejected. The function can also return a `Promise`.
+customValidation | `(file: NiftyFile) => Promise<any>` | `undefined` | A custom function, which will be called in the processing step. The function takes the `NiftyFile` as an argument and must return a `Promise`. The `reject()` of the Promise can take a `string`, which is used as an error message.
 
 ##### Example initialization with options
 

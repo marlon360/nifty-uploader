@@ -21,34 +21,14 @@ test('custom validation: promise resolved', (done) => {
     uploader.addFile(file);
 });
 
-test('custom validation: promise resolved with false', (done) => {
-    // new uploader instance without options
-    const uploader = new NiftyUploader({
-        autoUpload: false,
-        customValidation: ((file) => {
-            return new Promise((resolve, reject) => {
-                resolve(false);
-            })
-        })
-    });
-
-    const file = new File(["content"], "filename.jpg");
-
-    uploader.on('processing-failed',(data) => {
-        expect(data.file.name).toBe(file.name);
-        done();
-    });
-
-    uploader.addFile(file);
-});
-
 test('custom validation: promise rejected', (done) => {
+    const errorMsg = "error";
     // new uploader instance without options
     const uploader = new NiftyUploader({
         autoUpload: false,
         customValidation: ((file) => {
             return new Promise((resolve, reject) => {
-                reject();
+                reject(errorMsg);
             })
         })
     });
@@ -57,25 +37,7 @@ test('custom validation: promise rejected', (done) => {
 
     uploader.on('processing-failed',(data) => {
         expect(data.file.name).toBe(file.name);
-        done();
-    });
-
-    uploader.addFile(file);
-});
-
-test('custom validation: boolean', (done) => {
-    // new uploader instance without options
-    const uploader = new NiftyUploader({
-        autoUpload: false,
-        customValidation: ((file) => {
-            return true;
-        })
-    });
-
-    const file = new File(["content"], "filename.jpg");
-
-    uploader.on('file-queued',(data) => {
-        expect(data.file.name).toBe(file.name);
+        expect(data.error).toBe(errorMsg);
         done();
     });
 

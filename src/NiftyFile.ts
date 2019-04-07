@@ -74,9 +74,10 @@ export class NiftyFile extends UploadElement {
             this.options.allowedFileTypes,
             this.options.fileTypeError
         ));
-        // add task for custom validation
-        tasks.push(this.customValidation());
-
+        // add task for custom validation if defined
+        if (this.options.customValidation) {
+            tasks.push(this.options.customValidation(this));
+        }
         // create task for generation of unique identifier
         const uniqueIdentifierTask = this.generateUniqueIdentifier().then((identifier) => {
             this.uniqueIdentifier = identifier;
@@ -211,25 +212,6 @@ export class NiftyFile extends UploadElement {
             const defaultUniqueIdentifier = this.size + "-" + this.name.replace(/[^0-9a-zA-Z_-]/igm, "");
             return Promise.resolve(defaultUniqueIdentifier);
         }
-    }
-
-    private customValidation(): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            if (this.options.customValidation) {
-                const validation = this.options.customValidation(this);
-                Promise.resolve(validation).then((valid) => {
-                    if (valid === undefined || valid) {
-                        resolve();
-                    } else {
-                        reject();
-                    }
-                }).catch(() => {
-                    reject();
-                });
-            } else {
-                resolve(true);
-            }
-        });
     }
 
     private fileUploadSuccessful() {
