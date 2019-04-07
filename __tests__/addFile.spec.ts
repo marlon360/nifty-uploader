@@ -38,7 +38,7 @@ test('add single initial file to uploader with size', (done) => {
     })
 
     // add a test file
-    uploader.addInitialFile({name: "test", uuid: "ABC-123", size: 3});
+    uploader.addInitialFile({name: "test", uniqueIdentifier: "ABC-123", size: 3});
 });
 test('add single initial file to uploader without size', (done) => {
     // new uploader instance
@@ -59,10 +59,10 @@ test('add single initial file to uploader without size', (done) => {
     })
 
     // add a test file
-    uploader.addInitialFile({name: "test", uuid: "ABC-123"});
+    uploader.addInitialFile({name: "test", uniqueIdentifier: "ABC-123"});
 });
 
-test('add mulötiple initial files to uploader', (done) => {
+test('add multiple initial files to uploader', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({
         autoUpload: false,
@@ -83,7 +83,7 @@ test('add mulötiple initial files to uploader', (done) => {
     })
 
     // add a test file
-    uploader.addInitialFiles([{name: "test", uuid: "ABC-123"}, {name: "test2", uuid: "ABC-1232"}]);
+    uploader.addInitialFiles([{name: "test", uniqueIdentifier: "ABC-123"}, {name: "test2", uniqueIdentifier: "ABC-1232"}]);
 });
 
 test('add multiple file to uploader', (done) => {
