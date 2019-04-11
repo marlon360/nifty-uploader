@@ -1,33 +1,10 @@
 import { NiftyFile } from "./NiftyFile";
 
-export interface INiftyOptionsParameter {
-    chunking?: boolean;
-    chunkSize?: number;
-    numberOfConcurrentUploads?: number;
-    generateUniqueIdentifier?: ((file: NiftyFile) => string | Promise<string>);
-    endpoint?: string;
-    customRequestParameters?: { [key: string]: string | number };
-    customHeaders?: { [key: string]: string | number };
-    autoUpload?: boolean;
-    autoQueue?: boolean;
-    autoProcess?: boolean;
-    maxRetries?: number;
-    retryDelay?: number;
-    permanentError?: number[];
-    minFileSize?: number;
-    maxFileSize?: number;
-    totalFileSizeLimit?: number;
-    allowedFileTypes?: string[]; // accepts: .extension, extension, mime/type, mime/*
-    customValidation?: ((file: NiftyFile) => Promise<any>);
-
-    fileTooSmallError?: ((size: number, min: number) => string);
-    fileTooBigError?: ((size: number, max: number) => string);
-    fileTypeError?: ((type: string, allowedFileTypes: string[]) => string);
-    totalFileSizeLimitError?: ((size: number, totalFileSizeLimit: number, totalFileSize: number) => string);
+export interface INiftyOptionsParameter extends Partial<INiftyOptions> {
 
 }
 
-export interface INiftyOptions extends INiftyOptionsParameter {
+export interface INiftyOptions {
     chunking: boolean;
     chunkSize: number;
     numberOfConcurrentUploads: number;
@@ -54,7 +31,7 @@ export interface INiftyOptions extends INiftyOptionsParameter {
 
 }
 
-export class NiftyDefaultOptions implements INiftyOptionsParameter {
+export class NiftyDefaultOptions implements INiftyOptions {
     // chuning enabled
     public chunking = true;
     // 2 MB for chunks
