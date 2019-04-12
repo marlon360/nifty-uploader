@@ -104,7 +104,7 @@ export class NiftyUploader {
         // run the process method of the file
         file.processFile().then(() => {
             // ste status to processed after successful processing
-            file.status = NiftyStatus.PROCESSED;
+            file.status = NiftyStatus.ACCEPTED;
             // trigger fileProcessedEvent
             this.emit("processing-success", { file });
             // enqueue file if autoQueue is enabled
@@ -210,7 +210,7 @@ export class NiftyUploader {
                 file.status === NiftyStatus.QUEUED ||
                 file.status === NiftyStatus.SUCCESS ||
                 file.status === NiftyStatus.PENDING_RETRY ||
-                file.status === NiftyStatus.PROCESSED) {
+                file.status === NiftyStatus.ACCEPTED) {
                 totalFileSize += file.size;
             }
         }

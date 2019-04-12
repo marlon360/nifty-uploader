@@ -1,7 +1,7 @@
 export enum NiftyStatus {
     ADDED,
     PROCESSING,
-    PROCESSED,
+    ACCEPTED,
     REJECTED,
     QUEUED,
     UPLOADING,
