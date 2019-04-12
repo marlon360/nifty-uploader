@@ -31,7 +31,7 @@ export abstract class UploadElement {
     }
 
     public isComplete() {
-        return this.status === NiftyStatus.ERROR || this.status === NiftyStatus.SUCCESS;
+        return this.status === NiftyStatus.FAILED_UPLOADING || this.status === NiftyStatus.SUCCEEDED_UPLOADING;
     }
 
     public getProgress(): number {
@@ -54,17 +54,17 @@ export abstract class UploadElement {
             // request event handler
             const onRequestComplete = () => {
                 if (this.connection.status === 200 || this.connection.status === 201) {
-                    this.status = NiftyStatus.SUCCESS;
+                    this.status = NiftyStatus.SUCCEEDED_UPLOADING;
                     resolve();
                 } else {
                     // do not retry on permanent error
                     if (this.options.permanentError.indexOf(this.connection.status) > -1) {
-                        this.status = NiftyStatus.ERROR;
+                        this.status = NiftyStatus.FAILED_UPLOADING;
                         reject();
                     } else {
                         // if maximum of retries reached, element failed
                         if (this.currentRetries >= this.options.maxRetries) {
-                            this.status = NiftyStatus.ERROR;
+                            this.status = NiftyStatus.FAILED_UPLOADING;
                             reject();
                         } else {
                             // wait for retry
@@ -85,7 +85,7 @@ export abstract class UploadElement {
                 }
             };
             const onRequestError = () => {
-                this.status = NiftyStatus.ERROR;
+                this.status = NiftyStatus.FAILED_UPLOADING;
                 reject();
             };
             const onRequestProgess = (ev: ProgressEvent) => {

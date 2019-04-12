@@ -71,7 +71,7 @@ export class NiftyUploader {
                 uploader: this,
             });
             // set status to success
-            initialFile.status = NiftyStatus.SUCCESS;
+            initialFile.status = NiftyStatus.SUCCEEDED_UPLOADING;
             // add the unique identifier
             initialFile.uniqueIdentifier = file.uniqueIdentifier;
             // add size if available
@@ -208,7 +208,7 @@ export class NiftyUploader {
         for (const file of this.files) {
             if (file.status === NiftyStatus.UPLOADING ||
                 file.status === NiftyStatus.QUEUED ||
-                file.status === NiftyStatus.SUCCESS ||
+                file.status === NiftyStatus.SUCCEEDED_UPLOADING ||
                 file.status === NiftyStatus.PENDING_RETRY ||
                 file.status === NiftyStatus.ACCEPTED) {
                 totalFileSize += file.size;
