@@ -173,6 +173,18 @@ export class NiftyUploader {
         }
     }
 
+    public finalize(file: NiftyFile) {
+
+        file.status = NiftyStatus.FINALIZING;
+        // do finalizing stuff
+        Promise.resolve().then(() => {
+            file.status = NiftyStatus.SUCCESSFULLY_COMPLETED;
+        });
+        // .catch(() => {
+        //     file.status = NiftyStatus.UNSUCCESSFULLY_COMPLETED;
+        // });
+    }
+
     /**
      * Cancels all files of the uploader.
      *
@@ -308,6 +320,7 @@ export class NiftyUploader {
             this.upload();
         });
         this.on("file-success", (data: { file: NiftyFile }) => {
+            this.finalize(data.file);
             this.upload();
         });
     }

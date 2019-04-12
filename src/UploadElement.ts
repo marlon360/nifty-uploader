@@ -16,7 +16,7 @@ export abstract class UploadElement {
 
     public cancel(): boolean {
         // if element upload not completed
-        if (!this.isComplete()) {
+        if (!this.isUploadComplete()) {
             // if xhr connection active, abort it
             if (this.connection) {
                 this.connection.abort();
@@ -30,14 +30,18 @@ export abstract class UploadElement {
         return false;
     }
 
-    public isComplete() {
-        return this.status === NiftyStatus.FAILED_UPLOADING || this.status === NiftyStatus.SUCCEEDED_UPLOADING;
+    public isUploadComplete() {
+        return this.status === NiftyStatus.FAILED_UPLOADING ||
+               this.status === NiftyStatus.SUCCEEDED_UPLOADING ||
+               this.status === NiftyStatus.FINALIZING ||
+               this.status === NiftyStatus.SUCCESSFULLY_COMPLETED ||
+               this.status === NiftyStatus.UNSUCCESSFULLY_COMPLETED;
     }
 
     public getProgress(): number {
         if (this.status === NiftyStatus.UPLOADING) {
             return this.progress;
-        } else if (this.isComplete()) {
+        } else if (this.isUploadComplete()) {
             return 1;
         } else {
             return 0;

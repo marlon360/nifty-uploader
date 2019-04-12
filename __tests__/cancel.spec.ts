@@ -64,7 +64,7 @@ test('cancel completed upload', (done) => {
 
     uploader.on('file-success',(data) => {
         data.file.cancel();
-        expect(data.file.status).toBe(NiftyStatus.SUCCEEDED_UPLOADING);
+        expect(data.file.status).not.toBe(NiftyStatus.CANCELED);
         done();
     });
 
