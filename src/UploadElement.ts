@@ -1,3 +1,4 @@
+import { EventEmitter } from "./EventEmitter";
 import { INiftyOptions } from "./NiftyOptions";
 import { NiftyStatus } from "./NiftyStatus";
 import { NiftyUploader } from "./NiftyUploader";
@@ -9,8 +10,8 @@ export abstract class UploadElement {
     public uploader: NiftyUploader;
 
     protected progress: number = 0;
-
     protected connection: XMLHttpRequest;
+    protected ee: EventEmitter = new EventEmitter();
 
     private currentRetries = 0;
 
@@ -22,7 +23,7 @@ export abstract class UploadElement {
                 this.connection.abort();
             }
             // set status to canceled
-            this.status = NiftyStatus.CANCELED;
+            this.setStatus(NiftyStatus.CANCELED);
             // sucessfully canceled
             return true;
         }
@@ -32,10 +33,10 @@ export abstract class UploadElement {
 
     public isUploadComplete() {
         return this.status === NiftyStatus.FAILED_UPLOADING ||
-               this.status === NiftyStatus.SUCCEEDED_UPLOADING ||
-               this.status === NiftyStatus.FINALIZING ||
-               this.status === NiftyStatus.SUCCESSFULLY_COMPLETED ||
-               this.status === NiftyStatus.UNSUCCESSFULLY_COMPLETED;
+            this.status === NiftyStatus.SUCCEEDED_UPLOADING ||
+            this.status === NiftyStatus.FINALIZING ||
+            this.status === NiftyStatus.SUCCESSFULLY_COMPLETED ||
+            this.status === NiftyStatus.UNSUCCESSFULLY_COMPLETED;
     }
 
     public getProgress(): number {
@@ -48,6 +49,24 @@ export abstract class UploadElement {
         }
     }
 
+    public setStatus(newStatus: NiftyStatus) {
+        this.status = newStatus;
+        this.emit("status-changed");
+    }
+
+    public on(eventName: "status-changed", fn: () => void): void;
+    public on(eventName: string, fn: (...args: any) => void): void {
+        this.ee.on(eventName, fn);
+    }
+
+    public off(eventName: string, fn: () => void) {
+        this.ee.off(eventName, fn);
+    }
+
+    public emit(eventName: string, data?: any) {
+        this.ee.emit(eventName, data);
+    }
+
     protected uploadData(data: Blob): Promise<string | Error> {
 
         return new Promise<string | Error>((resolve, reject) => {
@@ -58,21 +77,21 @@ export abstract class UploadElement {
             // request event handler
             const onRequestComplete = () => {
                 if (this.connection.status === 200 || this.connection.status === 201) {
-                    this.status = NiftyStatus.SUCCEEDED_UPLOADING;
+                    this.setStatus(NiftyStatus.SUCCEEDED_UPLOADING);
                     resolve();
                 } else {
                     // do not retry on permanent error
                     if (this.options.permanentError.indexOf(this.connection.status) > -1) {
-                        this.status = NiftyStatus.FAILED_UPLOADING;
+                        this.setStatus(NiftyStatus.FAILED_UPLOADING);
                         reject();
                     } else {
                         // if maximum of retries reached, element failed
                         if (this.currentRetries >= this.options.maxRetries) {
-                            this.status = NiftyStatus.FAILED_UPLOADING;
+                            this.setStatus(NiftyStatus.FAILED_UPLOADING);
                             reject();
                         } else {
                             // wait for retry
-                            this.status = NiftyStatus.PENDING_RETRY;
+                            this.setStatus(NiftyStatus.PENDING_RETRY);
                             // increment number of retries
                             this.currentRetries++;
                             // trigger retry event
@@ -80,7 +99,7 @@ export abstract class UploadElement {
                             // delay retry by specified time
                             setTimeout(() => {
                                 // queue element
-                                this.status = NiftyStatus.QUEUED;
+                                this.setStatus(NiftyStatus.QUEUED);
                                 // upload next element
                                 this.uploader.upload();
                             }, this.options.retryDelay);
@@ -89,7 +108,7 @@ export abstract class UploadElement {
                 }
             };
             const onRequestError = () => {
-                this.status = NiftyStatus.FAILED_UPLOADING;
+                this.setStatus(NiftyStatus.FAILED_UPLOADING);
                 reject();
             };
             const onRequestProgess = (ev: ProgressEvent) => {

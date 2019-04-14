@@ -1,3 +1,4 @@
+import { EventEmitter } from "./EventEmitter";
 import { NiftyChunk } from "./NiftyChunk";
 import { INiftyOptions, INiftyOptionsParameter } from "./NiftyOptions";
 import { NiftyStatus } from "./NiftyStatus";
@@ -116,7 +117,7 @@ export class NiftyFile extends UploadElement {
                     });
                     // set status to uploading if this is the first chunk, which is uploading
                     if (this.status !== NiftyStatus.UPLOADING) {
-                        this.status = NiftyStatus.UPLOADING;
+                        this.setStatus(NiftyStatus.UPLOADING);
                         // trigger fileUploadStartedEvent
                         this.uploader.emit("file-upload-started", { file: this });
                     }
@@ -134,7 +135,7 @@ export class NiftyFile extends UploadElement {
                     // file upload failed
                     this.fileUploadFailed();
                 });
-            this.status = NiftyStatus.UPLOADING;
+            this.setStatus(NiftyStatus.UPLOADING);
             this.uploader.emit("file-upload-started", { file: this });
             // an upload started, so return true
             return true;
@@ -216,14 +217,14 @@ export class NiftyFile extends UploadElement {
 
     private fileUploadSuccessful() {
         // change status
-        this.status = NiftyStatus.SUCCEEDED_UPLOADING;
+        this.setStatus(NiftyStatus.SUCCEEDED_UPLOADING);
         // trigger event
         this.uploader.emit("file-upload-succeeded", { file: this });
     }
 
     private fileUploadFailed() {
         // change status
-        this.status = NiftyStatus.FAILED_UPLOADING;
+        this.setStatus(NiftyStatus.FAILED_UPLOADING);
         // trigger event
         this.uploader.emit("file-upload-failed", { file: this });
     }

@@ -35,7 +35,7 @@ export class NiftyChunk extends UploadElement {
         return new Promise<string | Error>((resolve, reject) => {
 
             // set status to uploading
-            this.status = NiftyStatus.UPLOADING;
+            this.setStatus(NiftyStatus.UPLOADING);
 
             // slice file
             const chunkData: Blob = this.sliceFile();
