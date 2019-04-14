@@ -176,13 +176,17 @@ export class NiftyUploader {
     public finalize(file: NiftyFile) {
 
         file.status = NiftyStatus.FINALIZING;
-        // do finalizing stuff
-        Promise.resolve().then(() => {
+
+        if (this.options.finalization) {
+            this.options.finalization(file).then(() => {
+                file.status = NiftyStatus.SUCCESSFULLY_COMPLETED;
+            }).catch(() => {
+                file.status = NiftyStatus.UNSUCCESSFULLY_COMPLETED;
+            });
+        } else {
             file.status = NiftyStatus.SUCCESSFULLY_COMPLETED;
-        });
-        // .catch(() => {
-        //     file.status = NiftyStatus.UNSUCCESSFULLY_COMPLETED;
-        // });
+        }
+
     }
 
     /**
@@ -256,10 +260,10 @@ export class NiftyUploader {
     public on(eventName: "file-canceled", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-retry", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-upload-started", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-success", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-failed", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-upload-succeeded", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-upload-failed", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-progress", fn: (data: { file: NiftyFile, progress: number }) => void): void;
-    public on(eventName: "chunk-success", fn: (data: {chunk: NiftyChunk}) => void): void;
+    public on(eventName: "chunk-success", fn: (data: { chunk: NiftyChunk }) => void): void;
     public on(eventName: "chunk-failed", fn: (data: { chunk: NiftyChunk, error: string | Error }) => void): void;
     public on(eventName: "chunk-retry", fn: (data: { chunk: NiftyChunk }) => void): void;
     public on(eventName: "chunk-progress", fn: (data: { chunk: NiftyChunk, progress: number }) => void): void;
@@ -319,7 +323,7 @@ export class NiftyUploader {
         this.on("chunk-success", (data: { chunk: NiftyChunk }) => {
             this.upload();
         });
-        this.on("file-success", (data: { file: NiftyFile }) => {
+        this.on("file-upload-succeeded", (data: { file: NiftyFile }) => {
             this.finalize(data.file);
             this.upload();
         });

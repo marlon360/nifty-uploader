@@ -87,7 +87,7 @@ test('file upload without chunking should succeed', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-success',(data) => {
+    uploader.on('file-upload-succeeded',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -107,7 +107,7 @@ test('file upload without chunking should fail', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-failed',(data) => {
+    uploader.on('file-upload-failed',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

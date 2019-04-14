@@ -23,6 +23,7 @@ export interface INiftyOptions {
     totalFileSizeLimit?: number;
     allowedFileTypes: string[];
     customValidation?: ((file: NiftyFile) => Promise<any>);
+    finalization?: ((file: NiftyFile) => Promise<string>);
 
     fileTooSmallError: ((size: number, min: number) => string);
     fileTooBigError: ((size: number, max: number) => string);

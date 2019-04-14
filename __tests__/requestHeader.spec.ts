@@ -15,7 +15,7 @@ test('file upload with custom headers', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-success',(data) => {
+    uploader.on('file-upload-succeeded',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

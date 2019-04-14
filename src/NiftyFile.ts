@@ -218,14 +218,14 @@ export class NiftyFile extends UploadElement {
         // change status
         this.status = NiftyStatus.SUCCEEDED_UPLOADING;
         // trigger event
-        this.uploader.emit("file-success", { file: this });
+        this.uploader.emit("file-upload-succeeded", { file: this });
     }
 
     private fileUploadFailed() {
         // change status
         this.status = NiftyStatus.FAILED_UPLOADING;
         // trigger event
-        this.uploader.emit("file-failed", { file: this });
+        this.uploader.emit("file-upload-failed", { file: this });
     }
 
     private chunkUploadSuccessful(chunk: NiftyChunk) {
