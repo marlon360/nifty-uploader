@@ -225,11 +225,11 @@ export class NiftyUploader {
     public getTotalFileSize(): number {
         let totalFileSize = 0;
         for (const file of this.files) {
-            if (file.status === NiftyStatus.UPLOADING ||
-                file.status === NiftyStatus.QUEUED ||
-                file.status === NiftyStatus.SUCCEEDED_UPLOADING ||
-                file.status === NiftyStatus.PENDING_RETRY ||
-                file.status === NiftyStatus.ACCEPTED) {
+            if (file.status != NiftyStatus.ADDED &&
+                file.status !== NiftyStatus.REJECTED &&
+                file.status !== NiftyStatus.FAILED_UPLOADING &&
+                file.status !== NiftyStatus.CANCELED &&
+                file.status !== NiftyStatus.UNSUCCESSFULLY_COMPLETED ) {
                 totalFileSize += file.size;
             }
         }
