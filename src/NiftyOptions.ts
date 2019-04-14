@@ -22,6 +22,7 @@ export interface INiftyOptions {
     maxFileSize?: number;
     totalFileSizeLimit?: number;
     allowedFileTypes: string[];
+    beforeProcess?: ((file: NiftyFile) => void | Error);
     customValidation?: ((file: NiftyFile) => Promise<any>);
     finalization?: ((file: NiftyFile) => Promise<any>);
 
@@ -71,11 +72,11 @@ export class NiftyDefaultOptions implements INiftyOptions {
     public fileTypeError = ((type: string, allowedFileTypes: string[]) => {
         let errorMsg = "Filetype is not allowed. Allowed file types: ";
         for (let i = 0; i < allowedFileTypes.length; i++) {
-                errorMsg += allowedFileTypes[i];
-                if (i < allowedFileTypes.length - 1) {
-                    errorMsg += ", ";
-                }
+            errorMsg += allowedFileTypes[i];
+            if (i < allowedFileTypes.length - 1) {
+                errorMsg += ", ";
             }
+        }
         return errorMsg;
     });
     public totalFileSizeLimitError = ((size: number, totalFileSizeLimit: number, totalFileSize: number) => {

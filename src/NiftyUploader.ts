@@ -111,6 +111,9 @@ export class NiftyUploader {
 
         try {
             file.beforeProcessing();
+            if (this.options.beforeProcess) {
+                this.options.beforeProcess(file);
+            }
         } catch (error) {
             errorHandler(error.message);
             return;
