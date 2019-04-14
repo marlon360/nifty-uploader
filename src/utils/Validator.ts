@@ -14,16 +14,6 @@ export class Validator {
         });
     }
 
-    public static validateTotalFileSize(size: number, totalFileSize: number, totalFileSizeLimit: number, totalFileSizeLimitError: ((size: number, totalFileSizeLimit: number, totalFileSize: number) => string)): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            if (size + totalFileSize <= totalFileSizeLimit) {
-                resolve();
-            } else {
-                reject(totalFileSizeLimitError(size, totalFileSizeLimit, totalFileSize));
-            }
-        });
-    }
-
     public static validateFileType(file: Blob | File, filename: string, allowedFileTypes: string[], fileTypeError: ((type: string, allowedFileTypes: string[]) => string)): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             // If no extensions specified, allow every file

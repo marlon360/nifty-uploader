@@ -99,6 +99,23 @@ export class NiftyUploader {
      * @param file The file to process.
      */
     public processFile(file: NiftyFile) {
+
+        const errorHandler = (errorMsg: string) => {
+            // set status to rejected if processing failed
+            file.setStatus(NiftyStatus.REJECTED);
+            // remove from list
+            file.remove();
+            // trigger fileProcessingFailedEvent
+            this.emit("processing-failed", { file, error: errorMsg });
+        };
+
+        try {
+            file.beforeProcessing();
+        } catch (error) {
+            errorHandler(error.message);
+            return;
+        }
+
         // set status to processing
         file.setStatus(NiftyStatus.PROCESSING);
         // run the process method of the file
@@ -111,13 +128,8 @@ export class NiftyUploader {
             if (file.options.autoQueue) {
                 this.enqueueFile(file);
             }
-        }).catch((error) => {
-            // set status to rejected if processing failed
-            file.setStatus(NiftyStatus.REJECTED);
-            // remove from list
-            file.remove();
-            // trigger fileProcessingFailedEvent
-            this.emit("processing-failed", { file, error });
+        }).catch((errorMsg) => {
+            errorHandler(errorMsg);
         });
     }
 
@@ -180,14 +192,14 @@ export class NiftyUploader {
         if (this.options.finalization) {
             this.options.finalization(file).then(() => {
                 file.setStatus(NiftyStatus.SUCCESSFULLY_COMPLETED);
-                this.ee.emit("file-completed-successfully", {file});
+                this.ee.emit("file-completed-successfully", { file });
             }).catch(() => {
                 file.setStatus(NiftyStatus.UNSUCCESSFULLY_COMPLETED);
-                this.ee.emit("file-completed-unsuccessfully", {file});
+                this.ee.emit("file-completed-unsuccessfully", { file });
             });
         } else {
             file.setStatus(NiftyStatus.SUCCESSFULLY_COMPLETED);
-            this.ee.emit("file-completed-successfully", {file});
+            this.ee.emit("file-completed-successfully", { file });
         }
 
     }
@@ -227,10 +239,9 @@ export class NiftyUploader {
         for (const file of this.files) {
             if (file.status !== NiftyStatus.ADDED &&
                 file.status !== NiftyStatus.REJECTED &&
-                file.status !== NiftyStatus.PROCESSING &&
                 file.status !== NiftyStatus.FAILED_UPLOADING &&
                 file.status !== NiftyStatus.CANCELED &&
-                file.status !== NiftyStatus.UNSUCCESSFULLY_COMPLETED ) {
+                file.status !== NiftyStatus.UNSUCCESSFULLY_COMPLETED) {
                 totalFileSize += file.size;
             }
         }

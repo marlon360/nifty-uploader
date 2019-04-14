@@ -41,6 +41,15 @@ export class NiftyFile extends UploadElement {
 
     }
 
+    public beforeProcessing(): void | Error {
+        if (this.options.totalFileSizeLimit) {
+            if (this.size + this.uploader.getTotalFileSize() > this.options.totalFileSizeLimit) {
+                const errorMsg = this.options.totalFileSizeLimitError(this.size, this.uploader.getTotalFileSize(), this.options.totalFileSizeLimit);
+                throw new Error(errorMsg);
+            }
+        }
+    }
+
     /**
      * Processes this file.
      *
@@ -58,16 +67,7 @@ export class NiftyFile extends UploadElement {
             this.options.maxFileSize,
             this.options.fileTooBigError
         ));
-        // if total file size limit enabled
-        if (this.options.totalFileSizeLimit) {
-            // add task for total file size validation
-            tasks.push(Validator.validateTotalFileSize(
-                this.size,
-                this.uploader.getTotalFileSize(),
-                this.options.totalFileSizeLimit,
-                this.options.totalFileSizeLimitError
-            ));
-        }
+
         // add task for file type validation
         tasks.push(Validator.validateFileType(
             this.content,
