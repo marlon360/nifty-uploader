@@ -6,7 +6,15 @@ import { NiftyUploader } from "./NiftyUploader";
 import { UploadElement } from "./UploadElement";
 import { Validator } from "./utils/Validator";
 
-export class NiftyFile extends UploadElement {
+interface IMetaData {
+
+    title?: string;
+    description?: string;
+    order?: number;
+
+}
+
+export class NiftyFile<Meta = {}> extends UploadElement {
 
     public options: INiftyOptions;
 
@@ -18,6 +26,8 @@ export class NiftyFile extends UploadElement {
     public uniqueIdentifier: string;
 
     public chunks: NiftyChunk[] = new Array<NiftyChunk>();
+
+    public meta: Partial<IMetaData & Meta>;
 
     constructor(param: {
         uploader: NiftyUploader,
@@ -186,6 +196,10 @@ export class NiftyFile extends UploadElement {
         } else {
             return super.getProgress();
         }
+    }
+
+    public setMeta(meta: Partial<IMetaData & Meta>) {
+        this.meta = { ...this.meta, ...meta };
     }
 
     // override method

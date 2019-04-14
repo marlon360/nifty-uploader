@@ -7,7 +7,7 @@ import { NiftyStatus } from "./NiftyStatus";
 export class NiftyUploader {
 
     // files in uploader
-    public files: NiftyFile[] = new Array<NiftyFile>();
+    public files: Array<NiftyFile<any>> = new Array<NiftyFile<any>>();
     // initilize options with default options
     public options: INiftyOptions = new NiftyDefaultOptions();
     // whether the browser support html5 file system api.
@@ -251,7 +251,7 @@ export class NiftyUploader {
         return totalFileSize;
     }
 
-    public getFileByUniqueIdentifier(uniqueIdentifier: string): NiftyFile | undefined {
+    public getFileByUniqueIdentifier<Meta>(uniqueIdentifier: string): NiftyFile<Meta> | undefined {
         for (const file of this.files) {
             if (file.uniqueIdentifier === uniqueIdentifier) {
                 return file;
@@ -260,8 +260,8 @@ export class NiftyUploader {
         return undefined;
     }
 
-    public getFilesByStatus(status: NiftyStatus[]): NiftyFile[] {
-        const files: NiftyFile[] = new Array<NiftyFile>();
+    public getFilesByStatus<Meta>(status: NiftyStatus[]): Array<NiftyFile<Meta>> {
+        const files: Array<NiftyFile<Meta>> = new Array<NiftyFile<Meta>>();
         for (const file of this.files) {
             if (status.indexOf(file.status) > -1) {
                 files.push(file);
