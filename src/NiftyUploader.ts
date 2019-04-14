@@ -227,6 +227,7 @@ export class NiftyUploader {
         for (const file of this.files) {
             if (file.status !== NiftyStatus.ADDED &&
                 file.status !== NiftyStatus.REJECTED &&
+                file.status !== NiftyStatus.PROCESSING &&
                 file.status !== NiftyStatus.FAILED_UPLOADING &&
                 file.status !== NiftyStatus.CANCELED &&
                 file.status !== NiftyStatus.UNSUCCESSFULLY_COMPLETED ) {
