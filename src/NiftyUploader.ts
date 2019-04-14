@@ -180,14 +180,14 @@ export class NiftyUploader {
         if (this.options.finalization) {
             this.options.finalization(file).then(() => {
                 file.status = NiftyStatus.SUCCESSFULLY_COMPLETED;
-                this.ee.emit('file-completed-successfully', {file: file});
+                this.ee.emit("file-completed-successfully", {file});
             }).catch(() => {
                 file.status = NiftyStatus.UNSUCCESSFULLY_COMPLETED;
-                this.ee.emit('file-completed-unsuccessfully', {file: file});
+                this.ee.emit("file-completed-unsuccessfully", {file});
             });
         } else {
             file.status = NiftyStatus.SUCCESSFULLY_COMPLETED;
-            this.ee.emit('file-completed-successfully', {file: file});
+            this.ee.emit("file-completed-successfully", {file});
         }
 
     }
