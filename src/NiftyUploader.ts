@@ -36,7 +36,7 @@ export class NiftyUploader {
             // add NiftyFile to Array
             this.files.push(addedFile);
             // change status to ADDED
-            addedFile.status = NiftyStatus.ADDED;
+            addedFile.setStatus(NiftyStatus.ADDED);
             // trigger fileAddedEvent
             this.emit("file-added", { file: addedFile });
             // process file if autoProcess is enabled
@@ -71,7 +71,7 @@ export class NiftyUploader {
                 uploader: this,
             });
             // set status to success
-            initialFile.status = NiftyStatus.SUCCEEDED_UPLOADING;
+            initialFile.setStatus(NiftyStatus.SUCCEEDED_UPLOADING);
             // add the unique identifier
             initialFile.uniqueIdentifier = file.uniqueIdentifier;
             // add size if available
@@ -100,11 +100,11 @@ export class NiftyUploader {
      */
     public processFile(file: NiftyFile) {
         // set status to processing
-        file.status = NiftyStatus.PROCESSING;
+        file.setStatus(NiftyStatus.PROCESSING);
         // run the process method of the file
         file.processFile().then(() => {
             // ste status to processed after successful processing
-            file.status = NiftyStatus.ACCEPTED;
+            file.setStatus(NiftyStatus.ACCEPTED);
             // trigger fileProcessedEvent
             this.emit("processing-success", { file });
             // enqueue file if autoQueue is enabled
@@ -113,7 +113,7 @@ export class NiftyUploader {
             }
         }).catch((error) => {
             // set status to rejected if processing failed
-            file.status = NiftyStatus.REJECTED;
+            file.setStatus(NiftyStatus.REJECTED);
             // remove from list
             file.remove();
             // trigger fileProcessingFailedEvent
@@ -128,7 +128,7 @@ export class NiftyUploader {
      */
     public enqueueFile(file: NiftyFile) {
         // set status to queued
-        file.status = NiftyStatus.QUEUED;
+        file.setStatus(NiftyStatus.QUEUED);
         // trigger fileQueuedEvent
         this.emit("file-queued", { file });
         // start uploading if autoUpload is enabled
@@ -175,18 +175,18 @@ export class NiftyUploader {
 
     public finalize(file: NiftyFile) {
 
-        file.status = NiftyStatus.FINALIZING;
+        file.setStatus(NiftyStatus.FINALIZING);
 
         if (this.options.finalization) {
             this.options.finalization(file).then(() => {
-                file.status = NiftyStatus.SUCCESSFULLY_COMPLETED;
+                file.setStatus(NiftyStatus.SUCCESSFULLY_COMPLETED);
                 this.ee.emit("file-completed-successfully", {file});
             }).catch(() => {
-                file.status = NiftyStatus.UNSUCCESSFULLY_COMPLETED;
+                file.setStatus(NiftyStatus.UNSUCCESSFULLY_COMPLETED);
                 this.ee.emit("file-completed-unsuccessfully", {file});
             });
         } else {
-            file.status = NiftyStatus.SUCCESSFULLY_COMPLETED;
+            file.setStatus(NiftyStatus.SUCCESSFULLY_COMPLETED);
             this.ee.emit("file-completed-successfully", {file});
         }
 
