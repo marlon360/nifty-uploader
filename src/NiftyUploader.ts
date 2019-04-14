@@ -180,11 +180,14 @@ export class NiftyUploader {
         if (this.options.finalization) {
             this.options.finalization(file).then(() => {
                 file.status = NiftyStatus.SUCCESSFULLY_COMPLETED;
+                this.ee.emit('file-completed-successfully', {file: file});
             }).catch(() => {
                 file.status = NiftyStatus.UNSUCCESSFULLY_COMPLETED;
+                this.ee.emit('file-completed-unsuccessfully', {file: file});
             });
         } else {
             file.status = NiftyStatus.SUCCESSFULLY_COMPLETED;
+            this.ee.emit('file-completed-successfully', {file: file});
         }
 
     }
@@ -262,6 +265,8 @@ export class NiftyUploader {
     public on(eventName: "file-upload-started", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-upload-succeeded", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-upload-failed", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-completed-successfully", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-completed-unsuccessfully", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-progress", fn: (data: { file: NiftyFile, progress: number }) => void): void;
     public on(eventName: "chunk-success", fn: (data: { chunk: NiftyChunk }) => void): void;
     public on(eventName: "chunk-failed", fn: (data: { chunk: NiftyChunk, error: string | Error }) => void): void;
