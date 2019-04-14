@@ -3,6 +3,8 @@ import { NiftyChunk } from "./NiftyChunk";
 import { NiftyFile } from "./NiftyFile";
 import { INiftyOptions, INiftyOptionsParameter, NiftyDefaultOptions } from "./NiftyOptions";
 import { NiftyStatus } from "./NiftyStatus";
+import { Plugin } from "./utils/Plugin";
+import { FileTypeValidator } from "./utils/FileTypeValidator";
 
 export class NiftyUploader {
 
@@ -14,6 +16,7 @@ export class NiftyUploader {
     public isSupported: boolean = false;
 
     private ee: EventEmitter;
+    private plugins: Plugin[] = new Array<Plugin>();
 
     constructor(options?: INiftyOptionsParameter) {
         this.ee = new EventEmitter();
@@ -21,6 +24,14 @@ export class NiftyUploader {
         this.options = { ...this.options, ...options };
         this.setupEventHandler();
         this.checkSupport();
+        this.install<typeof FileTypeValidator>(FileTypeValidator);
+    }
+
+    public install<T extends typeof Plugin>(pluginClass: T, options?: undefined): NiftyUploader {
+        const plugin = new pluginClass(this, options);
+        this.plugins.push(plugin);
+        plugin.onInit();
+        return this;
     }
 
     /**
@@ -101,8 +112,19 @@ export class NiftyUploader {
     public processFile(file: NiftyFile) {
         // set status to processing
         file.status = NiftyStatus.PROCESSING;
+
+        // all processing tasks
+        const tasks: Array<any> = new Array<any>();
+
+        // add the processing method to the task array of every plugin if defined
+        for (let plugin of this.plugins) {
+            if (plugin.ops.process) {
+                tasks.push(plugin.ops.process(file));
+            }
+        }
+
         // run the process method of the file
-        file.processFile().then(() => {
+        Promise.all<string>(tasks).then(() => {
             // ste status to processed after successful processing
             file.status = NiftyStatus.ACCEPTED;
             // trigger fileProcessedEvent
@@ -259,7 +281,7 @@ export class NiftyUploader {
     public on(eventName: "file-success", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-failed", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-progress", fn: (data: { file: NiftyFile, progress: number }) => void): void;
-    public on(eventName: "chunk-success", fn: (data: {chunk: NiftyChunk}) => void): void;
+    public on(eventName: "chunk-success", fn: (data: { chunk: NiftyChunk }) => void): void;
     public on(eventName: "chunk-failed", fn: (data: { chunk: NiftyChunk, error: string | Error }) => void): void;
     public on(eventName: "chunk-retry", fn: (data: { chunk: NiftyChunk }) => void): void;
     public on(eventName: "chunk-progress", fn: (data: { chunk: NiftyChunk, progress: number }) => void): void;

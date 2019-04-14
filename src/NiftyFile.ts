@@ -18,6 +18,8 @@ export class NiftyFile extends UploadElement {
 
     public chunks: NiftyChunk[] = new Array<NiftyChunk>();
 
+    public state: any = {};
+
     constructor(param: {
         uploader: NiftyUploader,
         file: File,
