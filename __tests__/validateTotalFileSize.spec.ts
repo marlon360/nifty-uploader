@@ -1,4 +1,5 @@
 import { NiftyUploader } from '../src/NiftyUploader';
+import { createMockXHR } from './mocks/mockXHR';
 
 test('file size limit reached', (done) => {
     // new uploader instance without options
@@ -40,6 +41,10 @@ test('file size limit reached with multiple files', (done) => {
 });
 
 test('file size limit not reached with multiple files', (done) => {
+    
+    const mockXHR = createMockXHR();
+    (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
+
     // new uploader instance without options
     const uploader = new NiftyUploader({
         totalFileSizeLimit: 5
@@ -57,6 +62,10 @@ test('file size limit not reached with multiple files', (done) => {
 });
 
 test('file size limit not reached', (done) => {
+
+    const mockXHR = createMockXHR();
+    (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
+
     // new uploader instance without options
     const uploader = new NiftyUploader({
         totalFileSizeLimit: 100
