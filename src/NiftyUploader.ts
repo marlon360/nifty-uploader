@@ -225,7 +225,7 @@ export class NiftyUploader {
     public getTotalFileSize(): number {
         let totalFileSize = 0;
         for (const file of this.files) {
-            if (file.status != NiftyStatus.ADDED &&
+            if (file.status !== NiftyStatus.ADDED &&
                 file.status !== NiftyStatus.REJECTED &&
                 file.status !== NiftyStatus.FAILED_UPLOADING &&
                 file.status !== NiftyStatus.CANCELED &&
