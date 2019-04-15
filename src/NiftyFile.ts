@@ -214,9 +214,13 @@ export class NiftyFile<Meta = {}> extends UploadElement {
         } as IMetaData & Partial<Meta>);
     }
 
-    public delete() {
+    public delete(remove: boolean = true) {
         this.deleteRequest().then(() => {
+            this.setStatus(NiftyStatus.DELETED);
             this.uploader.emit("file-deleted", { file: this });
+            if (remove) {
+                this.remove();
+            }
         }).catch(() => {
             this.uploader.emit("file-deletion-failed", { file: this });
         });
