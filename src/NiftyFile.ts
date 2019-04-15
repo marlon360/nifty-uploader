@@ -10,7 +10,6 @@ interface IMetaData {
 
     title?: string;
     description?: string;
-    order?: number;
 
 }
 
@@ -27,7 +26,7 @@ export class NiftyFile<Meta = {}> extends UploadElement {
 
     public chunks: NiftyChunk[] = new Array<NiftyChunk>();
 
-    public meta: Partial<IMetaData & Meta>;
+    public meta: IMetaData & Partial<Meta>;
 
     constructor(param: {
         uploader: NiftyUploader,
@@ -39,6 +38,9 @@ export class NiftyFile<Meta = {}> extends UploadElement {
         this.name = param.file.name;
         this.size = param.file.size;
         this.content = param.file;
+        this.setMeta({
+            title: this.name
+        } as IMetaData & Partial<Meta>);
 
         this.status = NiftyStatus.QUEUED;
 
@@ -198,7 +200,7 @@ export class NiftyFile<Meta = {}> extends UploadElement {
         }
     }
 
-    public setMeta(meta: Partial<IMetaData & Meta>) {
+    public setMeta(meta: IMetaData & Partial<Meta>) {
         this.meta = { ...this.meta, ...meta };
     }
 

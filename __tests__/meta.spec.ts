@@ -33,7 +33,21 @@ test('set meta data', (done) => {
         }
     });
 
+});
 
+test('meta title is file name', (done) => {
+    // new uploader instance
+    const uploader = new NiftyUploader({
+        autoUpload: false
+    });
 
+    uploader.on('processing-success', (data) => {
+        expect(data.file.meta.title).toBe(data.file.name);
+        done();
+
+    });
+
+    // add a test file
+    uploader.addFile(new File(["content"], "testfile"));
 
 });
