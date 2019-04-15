@@ -38,9 +38,8 @@ export class NiftyFile<Meta = {}> extends UploadElement {
         this.name = param.file.name;
         this.size = param.file.size;
         this.content = param.file;
-        this.setMeta({
-            title: this.name
-        } as IMetaData & Partial<Meta>);
+        
+        this.setTitle(this.name);
 
         this.status = NiftyStatus.QUEUED;
 
@@ -202,6 +201,12 @@ export class NiftyFile<Meta = {}> extends UploadElement {
 
     public setMeta(meta: IMetaData & Partial<Meta>) {
         this.meta = { ...this.meta, ...meta };
+    }
+
+    public setTitle(title: string) {
+        this.setMeta({
+            title: title
+        } as IMetaData & Partial<Meta>);
     }
 
     // override method
