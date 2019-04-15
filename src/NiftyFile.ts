@@ -38,7 +38,7 @@ export class NiftyFile<Meta = {}> extends UploadElement {
         this.name = param.file.name;
         this.size = param.file.size;
         this.content = param.file;
-        
+
         this.setTitle(this.name);
 
         this.status = NiftyStatus.QUEUED;
@@ -205,7 +205,7 @@ export class NiftyFile<Meta = {}> extends UploadElement {
 
     public setTitle(title: string) {
         this.setMeta({
-            title: title
+            title
         } as IMetaData & Partial<Meta>);
     }
 
