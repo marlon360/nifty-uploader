@@ -26,6 +26,13 @@ export interface INiftyOptions {
     customValidation?: ((file: NiftyFile) => Promise<any>);
     finalization?: ((file: NiftyFile) => Promise<any>);
 
+    delete: {
+        endpoint?: string,
+        requestParameter?: { [key: string]: string },
+        customHeaders?: { [key: string]: string },
+        method?: string
+    };
+
     fileTooSmallError: ((size: number, min: number) => string);
     fileTooBigError: ((size: number, max: number) => string);
     fileTypeError: ((type: string, allowedFileTypes: string[]) => string);
@@ -62,6 +69,13 @@ export class NiftyDefaultOptions implements INiftyOptions {
     public minFileSize = 1;
     // allow every type
     public allowedFileTypes = [];
+
+    public delete = {
+        customHeaders: {},
+        endpoint: "/delete",
+        method: "DELETE",
+        requestParameter: {}
+    };
 
     public fileTooSmallError = ((size: number, min: number) => {
         return "File is too small. File has to be at least " + min + " Bytes.";

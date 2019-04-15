@@ -3,6 +3,7 @@ import { NiftyChunk } from "./NiftyChunk";
 import { NiftyFile } from "./NiftyFile";
 import { INiftyOptions, INiftyOptionsParameter, NiftyDefaultOptions } from "./NiftyOptions";
 import { NiftyStatus } from "./NiftyStatus";
+import { mergeDeep } from "./utils/deepMerge";
 
 export class NiftyUploader {
 
@@ -18,7 +19,7 @@ export class NiftyUploader {
     constructor(options?: INiftyOptionsParameter) {
         this.ee = new EventEmitter();
         // merge provided options with current options
-        this.options = { ...this.options, ...options };
+        this.options = mergeDeep(this.options, options);
         this.setupEventHandler();
         this.checkSupport();
     }
@@ -272,6 +273,8 @@ export class NiftyUploader {
 
     // Events
     public on(eventName: "file-added", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-deleted", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-deletion-failed", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "processing-failed", fn: (data: { file: NiftyFile, error: string }) => void): void;
     public on(eventName: "processing-success", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-queued", fn: (data: { file: NiftyFile }) => void): void;

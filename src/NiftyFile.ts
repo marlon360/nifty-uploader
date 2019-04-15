@@ -1,9 +1,10 @@
 import { EventEmitter } from "./EventEmitter";
 import { NiftyChunk } from "./NiftyChunk";
-import { INiftyOptions, INiftyOptionsParameter } from "./NiftyOptions";
+import { INiftyOptions, INiftyOptionsParameter, NiftyDefaultOptions } from "./NiftyOptions";
 import { NiftyStatus } from "./NiftyStatus";
 import { NiftyUploader } from "./NiftyUploader";
 import { UploadElement } from "./UploadElement";
+import { mergeDeep } from "./utils/deepMerge";
 import { Validator } from "./utils/Validator";
 
 interface IMetaData {
@@ -28,6 +29,8 @@ export class NiftyFile<Meta = {}> extends UploadElement {
 
     public meta: IMetaData & Partial<Meta>;
 
+    private defaults: NiftyDefaultOptions;
+
     constructor(param: {
         uploader: NiftyUploader,
         file: File,
@@ -47,8 +50,10 @@ export class NiftyFile<Meta = {}> extends UploadElement {
         this.options = this.uploader.options;
         if (param.options) {
             // override options with file options
-            this.options = { ...this.options, ...param.options };
+            this.options = mergeDeep(this.options, param.options);
+
         }
+        this.defaults = new NiftyDefaultOptions();
 
     }
 
@@ -209,6 +214,14 @@ export class NiftyFile<Meta = {}> extends UploadElement {
         } as IMetaData & Partial<Meta>);
     }
 
+    public delete() {
+        this.deleteRequest().then(() => {
+            this.uploader.emit("file-deleted", { file: this });
+        }).catch(() => {
+            this.uploader.emit("file-deletion-failed", { file: this });
+        });
+    }
+
     // override method
     protected getRequestParameter(): { [key: string]: string | number } {
         const params = {
@@ -225,6 +238,61 @@ export class NiftyFile<Meta = {}> extends UploadElement {
 
     protected triggerProgressEvent(): void {
         this.uploader.emit("file-progress", { file: this, progress: this.getProgress() });
+    }
+
+    private deleteRequest(): Promise<string | Error> {
+        return new Promise<string | Error>((resolve, reject) => {
+
+            // create request
+            const connection = new XMLHttpRequest();
+
+            // request event handler
+            const onRequestComplete = () => {
+                if (connection.status === 200 || connection.status === 201) {
+                    resolve();
+                } else {
+                    reject();
+                }
+            };
+            const onRequestError = () => {
+                reject();
+            };
+
+            connection.onload = onRequestComplete;
+            connection.onerror = onRequestError;
+            connection.ontimeout = onRequestError;
+
+            // create form data to send
+            const formData = new FormData();
+
+            // request parameter
+            let requestParameter: { [key: string]: string } = {
+                uniqueIdentifier: this.uniqueIdentifier
+            };
+            if (this.uploader.options.delete.requestParameter) {
+                requestParameter = { ...requestParameter, ...this.uploader.options.delete.requestParameter };
+            }
+            // append parameter to formdata
+            for (const parameter of Object.keys(requestParameter)) {
+                formData.append(parameter, String(requestParameter[parameter]));
+            }
+
+            const method = this.options.delete.method ? this.options.delete.method : this.defaults.delete.method;
+            const endpoint = this.options.delete.endpoint ? this.options.delete.endpoint : this.defaults.delete.endpoint;
+
+            // set request method and url
+            this.connection.open(method, endpoint);
+
+            if (this.options.delete.customHeaders) {
+                // set custom headers
+                for (const header of Object.keys(this.options.delete.customHeaders)) {
+                    connection.setRequestHeader(header, String(this.options.customHeaders[header]));
+                }
+            }
+
+            // initilize request
+            connection.send(formData);
+        });
     }
 
     private generateUniqueIdentifier(): Promise<string> {
