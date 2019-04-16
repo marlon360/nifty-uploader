@@ -271,7 +271,8 @@ export class NiftyFile<Meta = {}> extends UploadElement {
 
             // request parameter
             let requestParameter: { [key: string]: string } = {
-                uniqueIdentifier: this.uniqueIdentifier
+                uniqueIdentifier: this.uniqueIdentifier,
+                method: "delete"
             };
             if (this.uploader.options.delete.requestParameter) {
                 requestParameter = { ...requestParameter, ...this.uploader.options.delete.requestParameter };
@@ -285,7 +286,7 @@ export class NiftyFile<Meta = {}> extends UploadElement {
             const endpoint = this.options.delete.endpoint ? this.options.delete.endpoint : this.defaults.delete.endpoint;
 
             // set request method and url
-            this.connection.open(method, endpoint);
+            this.connection.open(method, endpoint+"/"+this.uniqueIdentifier);
 
             if (this.options.delete.customHeaders) {
                 // set custom headers
