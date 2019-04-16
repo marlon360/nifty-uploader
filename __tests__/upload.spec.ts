@@ -14,6 +14,9 @@ test('chunk upload should succeed', (done) => {
 
     uploader.on('chunk-success',(data) => {
         expect(data.chunk.file.name).toBe(file.name);
+    });
+    uploader.on('file-completed-successfully',(data) => {
+        expect(data.file.name).toBe(file.name);
         done();
     });
 
@@ -23,7 +26,9 @@ test('chunk upload should succeed', (done) => {
 
 test('chunk upload should fail', (done) => {
 
-    const mockXHR = createMockXHR(500);
+    const mockXHR = createMockXHR({
+        status: 500
+    });
     (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
 
     // new uploader instance
@@ -41,7 +46,10 @@ test('chunk upload should fail', (done) => {
 
 test('chunk upload should fail because of xhr error', (done) => {
 
-    const mockXHR = createMockXHR(500, true);
+    const mockXHR = createMockXHR({
+        status: 500,
+        load: true
+    });
     (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
 
     // new uploader instance
@@ -60,7 +68,11 @@ test('chunk upload should fail because of xhr error', (done) => {
 
 test('chunk upload should fail because of xhr timeout', (done) => {
 
-    const mockXHR = createMockXHR(500, false, true);
+    const mockXHR = createMockXHR({
+        status: 500,
+        load: false,
+        error: true
+    });
     (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
 
     // new uploader instance
@@ -98,7 +110,9 @@ test('file upload without chunking should succeed', (done) => {
 
 test('file upload without chunking should fail', (done) => {
 
-    const mockXHR = createMockXHR(500);
+    const mockXHR = createMockXHR({
+        status: 500
+    });
     (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
 
     // new uploader instance

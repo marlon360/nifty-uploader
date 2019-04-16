@@ -1,4 +1,15 @@
-export const createMockXHR = (status: number = 200, load = true, error: boolean = false, timeout: boolean = false) => {
+export function createMockXHR(params?: {
+        status?: number,
+        load?: boolean,
+        error?: boolean,
+        timeout?: boolean
+    }) {
+
+    let status = params && params.status ? params.status : 200;
+    let load = params && params.load ? params.load : true;
+    let error = params && params.error ? params.error : false;
+    let timeout = params && params.timeout ? params.timeout : false;
+
     const mockXHR = {
         onload: jest.fn(),
         onerror: jest.fn(),

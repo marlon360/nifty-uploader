@@ -51,7 +51,9 @@ test('file delete fail', (done) => {
     const file = new File(["content"], "filename");
 
     uploader.on('file-completed-successfully',(data) => {
-        mockXHR = createMockXHR(500);
+        mockXHR = createMockXHR({
+            status: 500
+        });
         (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
         data.file.delete();
     });
@@ -78,7 +80,11 @@ test('file delete fail with xhr error', (done) => {
     const file = new File(["content"], "filename");
 
     uploader.on('file-completed-successfully',(data) => {
-        mockXHR = createMockXHR(500, false, true);
+        mockXHR = createMockXHR({
+            status: 500,
+            load: false,
+            error: true
+        });
         (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
         data.file.delete();
     });

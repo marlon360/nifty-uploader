@@ -3,7 +3,10 @@ import { NiftyUploader } from "../src/NiftyUploader";
 
 test('too many concurrent uploads', (done) => {
 
-    const mockXHR = createMockXHR(200, false);
+    const mockXHR = createMockXHR({
+        status: 200,
+        load: true
+    });
     (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
 
     // new uploader instance
@@ -11,7 +14,8 @@ test('too many concurrent uploads', (done) => {
         chunkSize: 1,
         numberOfConcurrentUploads: 2
     });
-    const file = new File(["content"], "filename");
+    const file = new File(["content123456789"], "filename");
+    const file2 = new File(["content123456789"], "filename");
 
     uploader.on('file-upload-started',(data) => {
         uploader.upload();
@@ -22,7 +26,12 @@ test('too many concurrent uploads', (done) => {
         done();
     });
 
-    uploader.addFile(file);
+    uploader.on('chunk-progress',(data) => {
+        uploader.upload();
+        uploader.upload();
+    });
+
+    uploader.addFiles([file, file2]);
     
     
 });

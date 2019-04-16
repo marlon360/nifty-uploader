@@ -3,7 +3,9 @@ import { NiftyUploader } from "../src/NiftyUploader";
 
 test('chunk upload should retry and fail', (done) => {
 
-    const mockXHR = createMockXHR(503);
+    const mockXHR = createMockXHR({
+        status: 503
+    });
     (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
 
     // new uploader instance
@@ -21,7 +23,9 @@ test('chunk upload should retry and fail', (done) => {
 
 test('chunk upload should retry and trigger event', (done) => {
 
-    const mockXHR = createMockXHR(503);
+    const mockXHR = createMockXHR({
+        status: 503
+    });
     (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
 
     // new uploader instance
@@ -39,7 +43,9 @@ test('chunk upload should retry and trigger event', (done) => {
 
 test('file upload should retry and trigger event', (done) => {
 
-    const mockXHR = createMockXHR(503);
+    const mockXHR = createMockXHR({
+        status: 503
+    });
     (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
 
     // new uploader instance
