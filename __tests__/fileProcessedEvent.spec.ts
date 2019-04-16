@@ -9,7 +9,7 @@ test('file processed event', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-submitted',(data) => {
+    uploader.on('file-accepted',(data) => {
         expect.anything();
         done();
     });

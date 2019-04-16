@@ -109,7 +109,7 @@ test('cancel all uploads', (done) => {
         done();
     })
 
-    uploader.on('file-submitted',(data) => {
+    uploader.on('file-accepted',(data) => {
         uploader.cancelAll();
     });
 

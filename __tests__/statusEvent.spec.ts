@@ -10,7 +10,7 @@ test('file status changed event', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-submitted',(data) => {
+    uploader.on('file-accepted',(data) => {
         data.file.on('status-changed',() => statusChanged(data.file));
     });
 

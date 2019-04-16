@@ -66,7 +66,7 @@ export class NiftyUploader {
                 uploader: this,
             });
             // set status to success
-            initialFile.setStatus(NiftyStatus.SUCCEEDED_UPLOADING);
+            initialFile.setStatus(NiftyStatus.SUCCEEDED);
             // add the unique identifier
             initialFile.uniqueIdentifier = file.uniqueIdentifier;
             // add size if available
@@ -74,7 +74,7 @@ export class NiftyUploader {
             // add file to array
             this.files.push(initialFile);
 
-            this.emit("file-submitted", { file: initialFile });
+            this.emit("file-success", { file: initialFile });
         }
     }
 
@@ -123,7 +123,7 @@ export class NiftyUploader {
             // ste status to processed after successful processing
             file.setStatus(NiftyStatus.ACCEPTED);
             // trigger fileProcessedEvent
-            this.emit("file-submitted", { file });
+            this.emit("file-accepted", { file });
             // enqueue file if autoQueue is enabled
             if (file.options.autoQueue) {
                 this.enqueueFile(file);
@@ -268,7 +268,7 @@ export class NiftyUploader {
 
     // Events
     public on(eventName: "file-submit", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-submitted", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-accepted", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-rejected", fn: (data: { file: NiftyFile, error: string }) => void): void;
     public on(eventName: "file-queued", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-upload-started", fn: (data: { file: NiftyFile }) => void): void;
@@ -294,7 +294,7 @@ export class NiftyUploader {
     }
 
     public emit(eventName: "file-submit", data: { file: NiftyFile }): void;
-    public emit(eventName: "file-submitted", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-accepted", data: { file: NiftyFile }): void;
     public emit(eventName: "file-rejected", data: { file: NiftyFile, error: string }): void;
     public emit(eventName: "file-queued", data: { file: NiftyFile }): void;
     public emit(eventName: "file-upload-started", data: { file: NiftyFile }): void;

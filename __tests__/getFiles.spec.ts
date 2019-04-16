@@ -27,7 +27,7 @@ test('get files by unique identifier', (done) => {
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.on('file-submitted',(data) => {
+    uploader.on('file-success',(data) => {
         // length should mow be 1
         expect(uploader.getFileByUniqueIdentifier("abc-def")).toBe(data.file);
         done();
@@ -45,7 +45,7 @@ test('get no file by unique identifier', (done) => {
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.on('file-submitted',(data) => {
+    uploader.on('file-success',(data) => {
         // length should mow be 1
         expect(uploader.getFileByUniqueIdentifier("abc")).not.toBe(data.file);
         done();

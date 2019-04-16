@@ -8,7 +8,7 @@ test('add single file to uploader', (done) => {
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.on('file-submitted',(data) => {
+    uploader.on('file-accepted',(data) => {
         // length should mow be 1
         expect(uploader.files.length).toBe(1);
         done();
@@ -26,7 +26,7 @@ test('add single initial file to uploader with size', (done) => {
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.on('file-submitted',(data) => {
+    uploader.on('file-success',(data) => {
         // length should mow be 1
         expect(uploader.files.length).toBe(1);
         expect(uploader.files[0].size).toBe(3);
@@ -46,7 +46,7 @@ test('add single initial file to uploader without size', (done) => {
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.on('file-submitted',(data) => {
+    uploader.on('file-success',(data) => {
         // length should mow be 1
         expect(uploader.files.length).toBe(1);
         expect(uploader.files[0].size).toBe(0);
@@ -68,7 +68,7 @@ test('add multiple initial files to uploader', (done) => {
     expect(uploader.files.length).toBe(0);
 
     let counter = 0;
-    uploader.on('file-submitted', (data) => {
+    uploader.on('file-success', (data) => {
         counter++;
         if (counter == 2) {
             // length should mow be 1
@@ -91,7 +91,7 @@ test('add multiple file to uploader', (done) => {
     expect(uploader.files.length).toBe(0);
 
     let counter = 0;
-    uploader.on('file-submitted',(data) => {
+    uploader.on('file-accepted',(data) => {
         counter++;
         if (counter == 2) {
             // length should mow be 1
@@ -131,7 +131,7 @@ test('file submitted event', (done) => {
         autoUpload: false
     });
 
-    uploader.on('file-submitted',(data) => {
+    uploader.on('file-accepted',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
