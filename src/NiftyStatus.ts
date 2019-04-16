@@ -1,6 +1,5 @@
 export enum NiftyStatus {
     SUBMITTING,
-    SUBMITTED,
     ACCEPTED,
     REJECTED,
     QUEUED,
