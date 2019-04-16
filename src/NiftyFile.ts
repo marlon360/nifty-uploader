@@ -215,17 +215,25 @@ export class NiftyFile<Meta = {}> extends UploadElement {
     }
 
     public delete(remove: boolean = true) {
-        this.setStatus(NiftyStatus.DELETING);
-        this.deleteRequest().then(() => {
-            this.setStatus(NiftyStatus.DELETED);
-            this.uploader.emit("file-deleted", { file: this });
-            if (remove) {
-                this.remove();
-            }
-        }).catch(() => {
-            this.setStatus(NiftyStatus.DELETE_FAILED);
-            this.uploader.emit("file-deletion-failed", { file: this });
-        });
+        if (this.isDeletable()) {
+            this.setStatus(NiftyStatus.DELETING);
+            this.deleteRequest().then(() => {
+                this.setStatus(NiftyStatus.DELETED);
+                this.uploader.emit("file-deleted", { file: this });
+                if (remove) {
+                    this.remove();
+                }
+            }).catch(() => {
+                this.setStatus(NiftyStatus.DELETE_FAILED);
+                this.uploader.emit("file-delete-failed", { file: this });
+            });
+        }
+    }
+
+    public isDeletable(): boolean {
+        return this.status === NiftyStatus.SUCCEEDED_UPLOADING ||
+            this.status === NiftyStatus.SUCCEEDED ||
+            this.status === NiftyStatus.DELETE_FAILED;
     }
 
     // override method

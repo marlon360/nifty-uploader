@@ -1,5 +1,6 @@
 import { NiftyUploader } from '../src/NiftyUploader';
 import { createMockXHR } from './mocks/mockXHR';
+import { NiftyStatus } from '../src/entry';
 
 test('file delete success', (done) => {
 
@@ -55,7 +56,8 @@ test('file delete fail', (done) => {
         data.file.delete();
     });
 
-    uploader.on('file-deletion-failed',(data) => {
+    uploader.on('file-delete-failed',(data) => {
+        data.file.delete();
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -81,7 +83,7 @@ test('file delete fail with xhr error', (done) => {
         data.file.delete();
     });
 
-    uploader.on('file-deletion-failed',(data) => {
+    uploader.on('file-delete-failed',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
