@@ -192,14 +192,14 @@ export class NiftyUploader {
         if (this.options.finalization) {
             this.options.finalization(file).then(() => {
                 file.setStatus(NiftyStatus.SUCCEEDED);
-                this.ee.emit("file-completed-successfully", { file });
+                this.ee.emit("file-success", { file });
             }).catch(() => {
                 file.setStatus(NiftyStatus.FAILED);
-                this.ee.emit("file-completed-unsuccessfully", { file });
+                this.ee.emit("file-failed", { file });
             });
         } else {
             file.setStatus(NiftyStatus.SUCCEEDED);
-            this.ee.emit("file-completed-successfully", { file });
+            this.ee.emit("file-success", { file });
         }
 
     }
@@ -279,8 +279,8 @@ export class NiftyUploader {
     public on(eventName: "file-delete-failed", fn: (data: { file: NiftyFile, error: string }) => void): void;
     public on(eventName: "file-canceled", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-retry", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-completed-successfully", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-completed-unsuccessfully", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-success", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-failed", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "chunk-success", fn: (data: { chunk: NiftyChunk }) => void): void;
     public on(eventName: "chunk-failed", fn: (data: { chunk: NiftyChunk, error: string | Error }) => void): void;
     public on(eventName: "chunk-retry", fn: (data: { chunk: NiftyChunk }) => void): void;
@@ -305,8 +305,8 @@ export class NiftyUploader {
     public emit(eventName: "file-delete-failed", data: { file: NiftyFile, error: string }): void;
     public emit(eventName: "file-canceled", data: { file: NiftyFile }): void;
     public emit(eventName: "file-retry", data: { file: NiftyFile }): void;
-    public emit(eventName: "file-completed-successfully", data: { file: NiftyFile }): void;
-    public emit(eventName: "file-completed-unsuccessfully", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-success", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-failed", data: { file: NiftyFile }): void;
     public emit(eventName: "chunk-success", data: { chunk: NiftyChunk }): void;
     public emit(eventName: "chunk-failed", data: { chunk: NiftyChunk, error: string | Error }): void;
     public emit(eventName: "chunk-retry", data: { chunk: NiftyChunk }): void;

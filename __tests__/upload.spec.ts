@@ -15,7 +15,7 @@ test('chunk upload should succeed', (done) => {
     uploader.on('chunk-success',(data) => {
         expect(data.chunk.file.name).toBe(file.name);
     });
-    uploader.on('file-completed-successfully',(data) => {
+    uploader.on('file-success',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

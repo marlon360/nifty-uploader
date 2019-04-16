@@ -22,7 +22,7 @@ test('file delete success', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-completed-successfully', (data) => {
+    uploader.on('file-success', (data) => {
         data.file.delete();
     });
 
@@ -50,7 +50,7 @@ test('file delete fail', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-completed-successfully', (data) => {
+    uploader.on('file-success', (data) => {
         mockXHR = createMockXHR({
             status: 500,
             response: {
@@ -83,7 +83,7 @@ test('file delete fail with xhr error', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-completed-successfully', (data) => {
+    uploader.on('file-success', (data) => {
         mockXHR = createMockXHR({
             status: 500,
             load: false,

@@ -15,7 +15,7 @@ test('file finalization should succeed', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-completed-successfully',(data) => {
+    uploader.on('file-success',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -38,7 +38,7 @@ test('file finalization should fail', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-completed-unsuccessfully',(data) => {
+    uploader.on('file-failed',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
