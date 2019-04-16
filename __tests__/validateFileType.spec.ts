@@ -84,7 +84,7 @@ test('file type not allowed: mime type', (done) => {
 
     const file = new File(["content"], "filename.mp4", {type: "video/mp4"});
 
-    uploader.on('processing-failed',(data) => {
+    uploader.on('file-rejected',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -122,7 +122,7 @@ test('file type not allowed: mime wildcard', (done) => {
 
     const file = new File(["content"], "filename.mp4", {type: "video/mp4"});
 
-    uploader.on('processing-failed',(data) => {
+    uploader.on('file-rejected',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });

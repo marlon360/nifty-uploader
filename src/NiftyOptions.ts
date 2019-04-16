@@ -14,7 +14,6 @@ export interface INiftyOptions {
     customHeaders: { [key: string]: string | number };
     autoUpload: boolean;
     autoQueue: boolean;
-    autoProcess: boolean;
     maxRetries: number;
     retryDelay: number;
     permanentError: number[];
@@ -57,8 +56,6 @@ export class NiftyDefaultOptions implements INiftyOptions {
     public autoUpload = true;
     // enable auto queue
     public autoQueue = true;
-    // enable auto process
-    public autoProcess = true;
     // retry 3 times
     public maxRetries = 3;
     // delay retry by 100ms

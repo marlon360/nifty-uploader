@@ -13,7 +13,7 @@ test('file progress event', (done) => {
         done();
     });
 
-    uploader.addFile(file, {autoProcess: false});
+    uploader.addFile(file);
     uploader.addFile(file);
     
 });

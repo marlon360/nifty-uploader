@@ -16,7 +16,7 @@ describe("test lifecycle auto options (add, process, enqueu, upload)", () => {
         });
     
         let correct = false;
-        uploader.on('file-added',(data) => {
+        uploader.on('file-submit',(data) => {
             correct = true;
         });
         uploader.on('file-upload-started',(data) => {
@@ -52,35 +52,6 @@ describe("test lifecycle auto options (add, process, enqueu, upload)", () => {
         uploader.addFile(file);
     });
     
-    
-    test('file should not upload if auto processing disabled', async () => {
-    
-        const mockXHR = createMockXHR();
-        (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
-    
-        const file = new File(["asd"], "testfile");
-        // new uploader instance
-        const uploader = new NiftyUploader({
-            autoProcess: false
-        });
-    
-        let correct = false;
-        uploader.on('file-added',(data) => {
-            correct = true;
-        });
-        uploader.on('file-upload-started',(data) => {
-            correct = false;
-        });
-    
-        // add a test file
-        uploader.addFile(file);
-    
-        await flushPromises();
-    
-        expect(correct).toBeTruthy();
-        
-    });
-    
     test('file should not upload if auto enqueue disabled', async () => {
     
         const mockXHR = createMockXHR();
@@ -93,7 +64,7 @@ describe("test lifecycle auto options (add, process, enqueu, upload)", () => {
         });
     
         let correct = false;
-        uploader.on('file-added',(data) => {
+        uploader.on('file-submit',(data) => {
             correct = true;
         });
         uploader.on('file-upload-started',(data) => {

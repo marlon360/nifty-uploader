@@ -9,7 +9,7 @@ test('file size limit reached', (done) => {
 
     const file = new File(["biggerthan2bytes"], "filename");
 
-    uploader.on('processing-failed',(data) => {
+    uploader.on('file-rejected',(data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -32,7 +32,7 @@ test('file size limit reached with multiple files', (done) => {
     const file = new File(["1"], "filename");
     const file2 = new File(["123"], "filename");
 
-    uploader.on('processing-failed',(data) => {
+    uploader.on('file-rejected',(data) => {
         expect(data.file.name).toBe(file2.name);
         done();
     });

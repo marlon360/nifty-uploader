@@ -4,15 +4,14 @@ import { NiftyStatus } from '../src/NiftyStatus';
 test('get files by status', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({
-        autoUpload: false,
-        autoProcess: false
+        autoUpload: false
     });
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.on('file-added',(data) => {
+    uploader.on('file-queued',(data) => {
         // length should mow be 1
-        expect(uploader.getFilesByStatus([NiftyStatus.ADDED]).length).toBe(1);
+        expect(uploader.getFilesByStatus([NiftyStatus.QUEUED]).length).toBe(1);
         done();
     })
 
@@ -23,13 +22,12 @@ test('get files by status', (done) => {
 test('get files by unique identifier', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({
-        autoUpload: false,
-        autoProcess: false
+        autoUpload: false
     });
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.on('file-added',(data) => {
+    uploader.on('file-submitted',(data) => {
         // length should mow be 1
         expect(uploader.getFileByUniqueIdentifier("abc-def")).toBe(data.file);
         done();
@@ -42,13 +40,12 @@ test('get files by unique identifier', (done) => {
 test('get no file by unique identifier', (done) => {
     // new uploader instance
     const uploader = new NiftyUploader({
-        autoUpload: false,
-        autoProcess: false
+        autoUpload: false
     });
     // file length should be 0, because no files were added
     expect(uploader.files.length).toBe(0);
 
-    uploader.on('file-added',(data) => {
+    uploader.on('file-submitted',(data) => {
         // length should mow be 1
         expect(uploader.getFileByUniqueIdentifier("abc")).not.toBe(data.file);
         done();

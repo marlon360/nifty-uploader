@@ -1,5 +1,6 @@
 import { EventEmitter } from '../src/EventEmitter';
 import { NiftyUploader } from '../src/entry';
+import { NiftyFile } from '../src/NiftyFile';
 
 test("event emitter listening", () => {
 
@@ -31,13 +32,19 @@ test("event emitter not listening", () => {
 test("event emitter on uploader", () => {
 
     let uploader = new NiftyUploader();
+
+    const file = new NiftyFile({
+        uploader,
+        file: new File(["asd"], "asd")
+    });
+
     // define callback for event
     const callback = jest.fn();
     // add callback to event
-    uploader.on('file-added', callback);
-    uploader.emit('file-added');
-    uploader.off('file-added', callback);
-    uploader.emit('file-added');
+    uploader.on('file-submit', callback);
+    uploader.emit('file-submit', {file});
+    uploader.off('file-submit', callback);
+    uploader.emit('file-submit', {file});
     expect(callback).toBeCalledTimes(1);
 })
 

@@ -10,7 +10,7 @@ test('set meta data', (done) => {
         myType: string;
     };
 
-    uploader.on('processing-success', (data) => {
+    uploader.on('file-submitted', (data) => {
         const file = uploader.getFileByUniqueIdentifier<MetaType>("abc");
         if (file) {
             file.meta = {
@@ -41,7 +41,7 @@ test('meta title is file name', (done) => {
         autoUpload: false
     });
 
-    uploader.on('processing-success', (data) => {
+    uploader.on('file-submitted', (data) => {
         expect(data.file.meta.title).toBe(data.file.name);
         done();
 

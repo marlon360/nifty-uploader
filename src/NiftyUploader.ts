@@ -34,16 +34,10 @@ export class NiftyUploader {
         for (const file of Array.from(files)) {
             // create NiftyFile Object of File and options
             const addedFile = new NiftyFile({ uploader: this, file, options });
-            // add NiftyFile to Array
-            this.files.push(addedFile);
-            // change status to ADDED
-            addedFile.setStatus(NiftyStatus.ADDED);
-            // trigger fileAddedEvent
-            this.emit("file-added", { file: addedFile });
-            // process file if autoProcess is enabled
-            if (this.options.autoProcess) {
-                this.processFile(addedFile);
-            }
+            // // trigger file submit event
+            this.emit("file-submit", { file: addedFile });
+            // // process file
+            this.processFile(addedFile);
         }
     }
 
@@ -80,7 +74,7 @@ export class NiftyUploader {
             // add file to array
             this.files.push(initialFile);
 
-            this.emit("file-added", { file: initialFile });
+            this.emit("file-submitted", { file: initialFile });
         }
     }
 
@@ -107,7 +101,7 @@ export class NiftyUploader {
             // remove from list
             file.remove();
             // trigger fileProcessingFailedEvent
-            this.emit("processing-failed", { file, error: errorMsg });
+            this.emit("file-rejected", { file, error: errorMsg });
         };
 
         try {
@@ -120,14 +114,16 @@ export class NiftyUploader {
             return;
         }
 
-        // set status to processing
-        file.setStatus(NiftyStatus.PROCESSING);
+        file.setStatus(NiftyStatus.SUBMITTING);
+
+        this.files.push(file);
+
         // run the process method of the file
         file.processFile().then(() => {
             // ste status to processed after successful processing
             file.setStatus(NiftyStatus.ACCEPTED);
             // trigger fileProcessedEvent
-            this.emit("processing-success", { file });
+            this.emit("file-submitted", { file });
             // enqueue file if autoQueue is enabled
             if (file.options.autoQueue) {
                 this.enqueueFile(file);
@@ -195,14 +191,14 @@ export class NiftyUploader {
 
         if (this.options.finalization) {
             this.options.finalization(file).then(() => {
-                file.setStatus(NiftyStatus.SUCCESSFULLY_COMPLETED);
+                file.setStatus(NiftyStatus.SUCCEEDED);
                 this.ee.emit("file-completed-successfully", { file });
             }).catch(() => {
-                file.setStatus(NiftyStatus.UNSUCCESSFULLY_COMPLETED);
+                file.setStatus(NiftyStatus.FAILED);
                 this.ee.emit("file-completed-unsuccessfully", { file });
             });
         } else {
-            file.setStatus(NiftyStatus.SUCCESSFULLY_COMPLETED);
+            file.setStatus(NiftyStatus.SUCCEEDED);
             this.ee.emit("file-completed-successfully", { file });
         }
 
@@ -241,11 +237,10 @@ export class NiftyUploader {
     public getTotalFileSize(): number {
         let totalFileSize = 0;
         for (const file of this.files) {
-            if (file.status !== NiftyStatus.ADDED &&
-                file.status !== NiftyStatus.REJECTED &&
+            if (file.status !== NiftyStatus.REJECTED &&
                 file.status !== NiftyStatus.FAILED_UPLOADING &&
                 file.status !== NiftyStatus.CANCELED &&
-                file.status !== NiftyStatus.UNSUCCESSFULLY_COMPLETED) {
+                file.status !== NiftyStatus.FAILED) {
                 totalFileSize += file.size;
             }
         }
@@ -272,20 +267,20 @@ export class NiftyUploader {
     }
 
     // Events
-    public on(eventName: "file-added", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-deleted", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-deletion-failed", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "processing-failed", fn: (data: { file: NiftyFile, error: string }) => void): void;
-    public on(eventName: "processing-success", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-submit", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-submitted", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-rejected", fn: (data: { file: NiftyFile, error: string }) => void): void;
     public on(eventName: "file-queued", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-canceled", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-retry", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-upload-started", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-progress", fn: (data: { file: NiftyFile, progress: number }) => void): void;
     public on(eventName: "file-upload-succeeded", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-upload-failed", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-deleted", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-deletion-failed", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-canceled", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-retry", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-completed-successfully", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-completed-unsuccessfully", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-progress", fn: (data: { file: NiftyFile, progress: number }) => void): void;
     public on(eventName: "chunk-success", fn: (data: { chunk: NiftyChunk }) => void): void;
     public on(eventName: "chunk-failed", fn: (data: { chunk: NiftyChunk, error: string | Error }) => void): void;
     public on(eventName: "chunk-retry", fn: (data: { chunk: NiftyChunk }) => void): void;
@@ -298,6 +293,24 @@ export class NiftyUploader {
         this.ee.off(eventName, fn);
     }
 
+    public emit(eventName: "file-submit", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-submitted", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-rejected", data: { file: NiftyFile, error: string }): void;
+    public emit(eventName: "file-queued", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-upload-started", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-progress", data: { file: NiftyFile, progress: number }): void;
+    public emit(eventName: "file-upload-succeeded", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-upload-failed", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-deleted", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-deletion-failed", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-canceled", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-retry", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-completed-successfully", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-completed-unsuccessfully", data: { file: NiftyFile }): void;
+    public emit(eventName: "chunk-success", data: { chunk: NiftyChunk }): void;
+    public emit(eventName: "chunk-failed", data: { chunk: NiftyChunk, error: string | Error }): void;
+    public emit(eventName: "chunk-retry", data: { chunk: NiftyChunk }): void;
+    public emit(eventName: "chunk-progress", data: { chunk: NiftyChunk, progress: number }): void;
     public emit(eventName: string, data?: any) {
         this.ee.emit(eventName, data);
     }

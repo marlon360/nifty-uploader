@@ -8,7 +8,7 @@ test('file is too big', (done) => {
 
     const file = new File(["biggerthan2bytes"], "filename");
 
-    uploader.on('processing-failed', (data) => {
+    uploader.on('file-rejected', (data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -27,7 +27,7 @@ test('custom error message', (done) => {
 
     const file = new File(["biggerthan2bytes"], "filename");
 
-    uploader.on('processing-failed', (data) => {
+    uploader.on('file-rejected', (data) => {
         expect(data.error).toBe("Max: "+2);
         done();
     });

@@ -1,6 +1,6 @@
 export enum NiftyStatus {
-    ADDED,
-    PROCESSING,
+    SUBMITTING,
+    SUBMITTED,
     ACCEPTED,
     REJECTED,
     QUEUED,
@@ -10,7 +10,9 @@ export enum NiftyStatus {
     FAILED_UPLOADING,
     CANCELED,
     FINALIZING,
-    SUCCESSFULLY_COMPLETED,
-    UNSUCCESSFULLY_COMPLETED,
-    DELETED
+    SUCCEEDED,
+    FAILED,
+    DELETING,
+    DELETED,
+    DELETE_FAILED
 }

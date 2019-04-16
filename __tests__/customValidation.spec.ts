@@ -35,7 +35,7 @@ test('custom validation: promise rejected', (done) => {
 
     const file = new File(["content"], "filename.jpg");
 
-    uploader.on('processing-failed',(data) => {
+    uploader.on('file-rejected',(data) => {
         expect(data.file.name).toBe(file.name);
         expect(data.error).toBe(errorMsg);
         done();

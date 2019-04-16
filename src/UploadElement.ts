@@ -35,8 +35,8 @@ export abstract class UploadElement {
         return this.status === NiftyStatus.FAILED_UPLOADING ||
             this.status === NiftyStatus.SUCCEEDED_UPLOADING ||
             this.status === NiftyStatus.FINALIZING ||
-            this.status === NiftyStatus.SUCCESSFULLY_COMPLETED ||
-            this.status === NiftyStatus.UNSUCCESSFULLY_COMPLETED;
+            this.status === NiftyStatus.SUCCEEDED ||
+            this.status === NiftyStatus.FAILED;
     }
 
     public getProgress(): number {
