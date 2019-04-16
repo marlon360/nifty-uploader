@@ -276,7 +276,7 @@ export class NiftyUploader {
     public on(eventName: "file-upload-succeeded", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-upload-failed", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-deleted", fn: (data: { file: NiftyFile }) => void): void;
-    public on(eventName: "file-delete-failed", fn: (data: { file: NiftyFile }) => void): void;
+    public on(eventName: "file-delete-failed", fn: (data: { file: NiftyFile, error: string }) => void): void;
     public on(eventName: "file-canceled", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-retry", fn: (data: { file: NiftyFile }) => void): void;
     public on(eventName: "file-completed-successfully", fn: (data: { file: NiftyFile }) => void): void;
@@ -302,7 +302,7 @@ export class NiftyUploader {
     public emit(eventName: "file-upload-succeeded", data: { file: NiftyFile }): void;
     public emit(eventName: "file-upload-failed", data: { file: NiftyFile }): void;
     public emit(eventName: "file-deleted", data: { file: NiftyFile }): void;
-    public emit(eventName: "file-delete-failed", data: { file: NiftyFile }): void;
+    public emit(eventName: "file-delete-failed", data: { file: NiftyFile, error: string }): void;
     public emit(eventName: "file-canceled", data: { file: NiftyFile }): void;
     public emit(eventName: "file-retry", data: { file: NiftyFile }): void;
     public emit(eventName: "file-completed-successfully", data: { file: NiftyFile }): void;

@@ -22,11 +22,11 @@ test('file delete success', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-completed-successfully',(data) => {
+    uploader.on('file-completed-successfully', (data) => {
         data.file.delete();
     });
 
-    uploader.on('file-deleted',(data) => {
+    uploader.on('file-deleted', (data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
@@ -37,7 +37,7 @@ test('file delete success', (done) => {
             method: undefined
         }
     });
-    
+
 });
 test('file delete fail', (done) => {
 
@@ -50,22 +50,26 @@ test('file delete fail', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-completed-successfully',(data) => {
+    uploader.on('file-completed-successfully', (data) => {
         mockXHR = createMockXHR({
-            status: 500
+            status: 500,
+            response: {
+                error: "Error Message"
+            }
         });
         (<any>window).XMLHttpRequest = jest.fn(() => mockXHR);
         data.file.delete();
     });
 
-    uploader.on('file-delete-failed',(data) => {
+    uploader.on('file-delete-failed', (data) => {
         data.file.delete();
         expect(data.file.name).toBe(file.name);
+        expect(data.error).toBe("Error Message");
         done();
     });
 
     uploader.addFile(file);
-    
+
 });
 
 test('file delete fail with xhr error', (done) => {
@@ -79,7 +83,7 @@ test('file delete fail with xhr error', (done) => {
     });
     const file = new File(["content"], "filename");
 
-    uploader.on('file-completed-successfully',(data) => {
+    uploader.on('file-completed-successfully', (data) => {
         mockXHR = createMockXHR({
             status: 500,
             load: false,
@@ -89,11 +93,11 @@ test('file delete fail with xhr error', (done) => {
         data.file.delete();
     });
 
-    uploader.on('file-delete-failed',(data) => {
+    uploader.on('file-delete-failed', (data) => {
         expect(data.file.name).toBe(file.name);
         done();
     });
 
     uploader.addFile(file);
-    
+
 });

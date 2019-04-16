@@ -2,13 +2,15 @@ export function createMockXHR(params?: {
         status?: number,
         load?: boolean,
         error?: boolean,
-        timeout?: boolean
+        timeout?: boolean,
+        response?: object
     }) {
 
     let status = params && params.status ? params.status : 200;
     let load = params && params.load ? params.load : true;
     let error = params && params.error ? params.error : false;
     let timeout = params && params.timeout ? params.timeout : false;
+    let response = params && params.response ? params.response : {};
 
     const mockXHR = {
         onload: jest.fn(),
@@ -30,9 +32,10 @@ export function createMockXHR(params?: {
                 this.onload();
             }
         }),
-        status: status,
+        status,
         abort: jest.fn(),
-        setRequestHeader: jest.fn()
+        setRequestHeader: jest.fn(),
+        response
     }
     return mockXHR;
 }

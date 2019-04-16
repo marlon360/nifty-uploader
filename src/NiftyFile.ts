@@ -223,9 +223,9 @@ export class NiftyFile<Meta = {}> extends UploadElement {
                 if (remove) {
                     this.remove();
                 }
-            }).catch(() => {
+            }).catch((error) => {
                 this.setStatus(NiftyStatus.DELETE_FAILED);
-                this.uploader.emit("file-delete-failed", { file: this });
+                this.uploader.emit("file-delete-failed", { file: this, error });
             });
         }
     }
@@ -265,11 +265,11 @@ export class NiftyFile<Meta = {}> extends UploadElement {
                 if (connection.status === 200 || connection.status === 201) {
                     resolve();
                 } else {
-                    reject();
+                    reject(connection.response.error);
                 }
             };
             const onRequestError = () => {
-                reject();
+                reject("Network request failed!");
             };
 
             connection.onload = onRequestComplete;
